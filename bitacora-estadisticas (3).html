@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#eef2f5">
+<title>BITÁCORA · Estadísticas y Control</title>
+<style>
+  :root{--bg:#eef2f5;--bg2:#fff;--panel:#fff;--panel2:#e7eef2;--line:#b9c9d3;--line2:#d9e3e9;
+    --ink:#11293a;--muted:#436072;--muted2:#6f8694;--cyan:#0a7d8c;--cyan-d:#0a5f6b;--amber:#a96b06;--green:#1e7d4f;--red:#bb352c;--gold:#8a6a2f;--gold2:#6e5318;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh}
+  header{display:flex;align-items:center;gap:14px;padding:14px 24px;background:#0a1726;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50;flex-wrap:wrap}
+  .mark{width:38px;height:38px;border-radius:10px;flex:none;background:radial-gradient(circle at 35% 30%,#123243,#081521);border:1px solid #1f3e52;display:grid;place-items:center}
+  .mark svg{width:21px;height:21px}
+  .ht h1{font-size:18px;font-weight:800;letter-spacing:2.5px;background:linear-gradient(90deg,#e7c987,#c9a35e);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .ht p{font-size:10px;letter-spacing:1px;color:#6f8a9c;text-transform:uppercase}
+  .hsp{flex:1}
+  .nav a{color:#9fb6c4;text-decoration:none;font-size:12px;font-weight:700;padding:8px 13px;border-radius:9px;border:1px solid #1f3e52;margin-left:8px}
+  .nav a:hover{background:#13283a;color:#fff}
+  .live{display:flex;align-items:center;gap:7px;color:#56d390;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+  .live .d{width:8px;height:8px;border-radius:50%;background:#56d390;animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  .wrap{max-width:1300px;margin:0 auto;padding:20px 24px}
+  .seg{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden;margin-bottom:18px}
+  .seg button{padding:10px 22px;background:none;border:none;color:var(--muted);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
+  .seg button.on{background:var(--cyan);color:#fff}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+  @media(max-width:820px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{background:#fff;border:1px solid var(--line2);border-radius:14px;padding:18px 20px;position:relative;overflow:hidden}
+  .kpi::after{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cyan)}
+  .kpi.k2::after{background:var(--green)}.kpi.k3::after{background:var(--amber)}.kpi.k4::after{background:var(--gold)}
+  .kpi .v{font-size:38px;font-weight:800;line-height:1}
+  .kpi .l{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-top:6px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:900px){.grid2{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--line2);border-radius:14px;padding:18px 20px;margin-bottom:18px}
+  .ct{font-size:13px;font-weight:800;letter-spacing:.8px;color:var(--ink);text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+  .bar-row{display:flex;align-items:center;gap:12px;margin-bottom:11px}
+  .bar-row .bl{width:130px;font-size:12.5px;font-weight:600;color:var(--ink);flex:none;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .bar-row .bt{flex:1;height:24px;background:var(--panel2);border-radius:6px;overflow:hidden}
+  .bar-row .bt i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--cyan-d),var(--cyan));min-width:2px;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+  .bar-row .bt i.g{background:linear-gradient(90deg,#176b42,var(--green))}
+  .bar-row .bt i.o{background:linear-gradient(90deg,#8a5604,var(--amber))}
+  .bar-row .bv{width:42px;font-size:13px;font-weight:700;color:var(--muted);flex:none;font-variant-numeric:tabular-nums}
+  .spark{display:flex;align-items:flex-end;gap:5px;height:140px;padding-top:8px}
+  .spark .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0}
+  .spark .col .bar{width:100%;max-width:42px;background:linear-gradient(180deg,var(--cyan),var(--cyan-d));border-radius:5px 5px 0 0;min-height:3px;transition:height .8s}
+  .spark .col .cl{font-size:9.5px;color:var(--muted2);white-space:nowrap}
+  .spark .col .cv{font-size:11px;font-weight:700;color:var(--ink)}
+  .tbl{width:100%;border-collapse:collapse;font-size:13px}
+  .tbl th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:8px 10px;border-bottom:2px solid var(--line)}
+  .tbl td{padding:9px 10px;border-bottom:1px solid var(--line2)}
+  .tbl td.n{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+  .tbl tr:hover td{background:#f4f8fa}
+  .simbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:11px;padding:11px 15px;margin-bottom:16px}
+  .simbar .lab{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  .simtog{display:inline-flex;background:#eef3f6;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+  .simtog button{padding:8px 16px;background:none;border:none;color:var(--muted);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer}
+  .simtog button.on{background:#8a6a2f;color:#fff}
+  .simbar .info{font-size:11px;color:var(--muted2);flex:1;min-width:200px}
+  .coopcards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+  @media(max-width:760px){.coopcards{grid-template-columns:1fr}}
+  .coopcard{border:1px solid var(--line2);border-radius:12px;padding:14px;border-top:4px solid var(--cyan)}
+  .coopcard .ac{font-size:20px;font-weight:800;color:var(--ink)}
+  .coopcard .full{font-size:11px;color:var(--muted);line-height:1.4;margin:4px 0 8px;min-height:30px}
+  .coopcard .big{font-size:32px;font-weight:800;line-height:1}
+  .coopcard .sub{font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+  .coopcard .rol{display:inline-block;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:2px 7px;border-radius:5px;margin-top:7px}
+  .cmp-grid{display:grid;grid-template-columns:230px 1fr;gap:24px;align-items:center}
+  @media(max-width:760px){.cmp-grid{grid-template-columns:1fr}}
+  .legend{display:flex;flex-direction:column;gap:10px}
+  .legend .li{display:flex;align-items:center;gap:10px;font-size:13px}
+  .legend .li .dot{width:14px;height:14px;border-radius:4px;flex:none}
+  .legend .li .nm{flex:1;font-weight:600;color:var(--ink)}
+  .legend .li .pc{font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums}
+  .legend .li .ct2{font-size:11px;color:var(--muted)}
+  .cmpbars{margin-top:6px}
+  .cmpbar{margin-bottom:13px}
+  .cmpbar .top{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px}
+  .cmpbar .top b{color:var(--ink)} .cmpbar .top span{color:var(--muted);font-variant-numeric:tabular-nums}
+  .cmpbar .track{height:22px;background:var(--panel2);border-radius:6px;overflow:hidden;display:flex}
+  .cmpbar .track i{height:100%;display:block;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+  .note{font-size:11px;color:var(--muted2);margin-top:12px;line-height:1.5;border-top:1px solid var(--line2);padding-top:10px}
+  .hlive{display:flex;flex-direction:column;gap:1px;padding:6px 12px;background:rgba(255,255,255,.06);border:1px solid #1f3e52;border-radius:10px}
+  .hlive .hl-row{display:flex;gap:9px;align-items:baseline}
+  .hlive .hl-f{font-size:12px;font-weight:700;color:#cfe0ea;text-transform:capitalize}
+  .hlive .hl-h{font-size:13px;font-weight:800;color:#e7c987;font-variant-numeric:tabular-nums}
+  .hlive .hl-c{font-size:11.5px;color:#9fb6c4;font-weight:600;display:flex;align-items:center;gap:5px;margin-top:1px}
+  .hlive .hl-loc{font-size:9px;color:#6f8a9c;text-transform:uppercase;letter-spacing:.5px}
+  .filtros{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:18px}
+  .filtros .fg{display:flex;flex-direction:column;gap:4px}
+  .filtros label{font-size:10px;font-weight:800;letter-spacing:.5px;color:var(--muted);text-transform:uppercase}
+  .filtros select,.filtros input{background:#f4f8fa;border:1.5px solid var(--line);color:var(--ink);border-radius:9px;padding:9px 11px;font-family:inherit;font-size:13px;outline:none}
+  .filtros .rango{display:none;gap:10px}
+  .filtros .rango.on{display:flex}
+  .empty{color:var(--muted2);font-size:13px;text-align:center;padding:30px}
+</style>
+</head>
+<body>
+<header>
+  <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="url(#g)" stroke-width="1.7" stroke-linecap="round"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e7c987"/><stop offset="1" stop-color="#34d3df"/></linearGradient></defs><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="2.3" fill="#34d3df" stroke="none"/></svg></div>
+  <div class="ht"><h1>ESTADÍSTICAS</h1><p>Control total de la operación</p></div>
+  <div class="hsp"></div>
+  <div class="hlive"><div class="hl-row"><span class="hl-f" id="hl-fecha">—</span><span class="hl-h" id="hl-hora">—</span></div><div class="hl-c" id="hl-clima">🌡️ …</div><div class="hl-loc">Puerto Madero · Río de la Plata</div></div>
+  <div class="live" style="margin-left:14px"><span class="d"></span>Datos en vivo</div>
+  <div class="nav"><a href="./">📋 Vale</a><a href="guardia.html">🗼 Guardia</a><a href="estadisticas.html" style="background:#13283a;color:#fff">📊 Estadísticas</a></div>
+</header>
+<div class="wrap">
+  <div class="filtros">
+    <div class="fg"><label>Período</label>
+      <select id="f-periodo">
+        <option value="dia">Hoy</option>
+        <option value="sem">Últimos 7 días</option>
+        <option value="mes" selected>Este mes</option>
+        <option value="messel">Mes específico…</option>
+        <option value="ano">Este año</option>
+        <option value="anosel">Año específico…</option>
+        <option value="rango">Entre fechas…</option>
+        <option value="all">Histórico (todo)</option>
+      </select>
+    </div>
+    <div class="fg" id="fg-mes" style="display:none"><label>Mes</label>
+      <input type="month" id="f-mes" value="2026-05"></div>
+    <div class="fg" id="fg-ano" style="display:none"><label>Año</label>
+      <select id="f-ano"></select></div>
+    <div class="rango" id="fg-rango">
+      <div class="fg"><label>Desde</label><input type="date" id="f-desde"></div>
+      <div class="fg"><label>Hasta</label><input type="date" id="f-hasta"></div>
+    </div>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="card">
+    <div class="ct">📈 Despachos por período</div>
+    <div class="spark" id="spark"></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card"><div class="ct">🚢 Por naviera / agencia</div><div id="byAgen"></div></div>
+    <div class="card"><div class="ct">⚓ Por práctico (puntos)</div><div id="byPrac"></div></div>
+  </div>
+  <div class="grid2">
+    <div class="card"><div class="ct">🛳 Top buques</div><div id="byBuque"></div></div>
+    <div class="card"><div class="ct">📍 Por zona / canal</div><div id="byZona"></div></div>
+  </div>
+
+  <div class="card">
+    <div class="ct">📋 Detalle por naviera</div>
+    <table class="tbl" id="tblAgen"><thead><tr><th>Agencia</th><th class="n">Despachos</th><th class="n">Maniobras</th><th class="n">Entradas</th><th class="n">Salidas</th><th class="n">Cerrados</th></tr></thead><tbody></tbody></table>
+  </div>
+
+  <div class="card">
+    <div class="ct">🥧 Participación en el puerto · comparativo entre cooperativas</div>
+    <div class="simbar">
+      <span class="lab">Fuente de datos</span>
+      <div class="simtog" id="simtog"><button data-m="vivo" class="on">En vivo (sistema)</button><button data-m="sim">Simulación · mayo 2026</button></div>
+      <span class="info" id="simInfo">Datos cargados en el sistema.</span>
+    </div>
+    <div class="coopcards" id="coopcards"></div>
+    <div class="cmp-grid">
+      <div id="cmpPie"></div>
+      <div class="legend" id="cmpLegend"></div>
+    </div>
+    <div class="cmpbars" id="cmpBars" style="margin-top:18px"></div>
+    <div id="cmpCoops"></div>
+    <div class="note" id="cmpNote"></div>
+  </div>
+</div>
+<script>
+/* ===== CAPA DE INTEGRACIÓN BITÁCORA · base central compartida =====
+   El Nº de despacho lo asigna el correlativo CENTRAL al recibir el llamado.
+   Una vez asignado queda cerrado: es el ID de toda la trazabilidad.
+   Modo demo: base compartida del dominio + canal en vivo entre pantallas.
+   Producción: estos mismos métodos apuntan a la API central de LTELC. */
+const DB_KEY='BITACORA_DB_V1';
+let MEMDB=null,BC=null;try{BC=new BroadcastChannel('bitacora');}catch(e){}
+const SEED_DESP={
+'636':{nro:'636',es:'E',serv:'ENT-ZC',buque:'MSC ADELE',med:'335 x 45.60',eslora:'335',manga:'45.60',puntal:'',agen:'MSC',band:'PANAMÁ',fecha:'2026-06-09',hora:'21:30',horaTxt:'ETA ZC 09/ 2130 Hs',cal:'9.7 / 9.80',cpr:'9.7',cpp:'9.8',desde:'ZONA COMÚN',hasta:'EXOLGAN II',bow:'ok',cf:'',uf:'',prac:'CASTRO',prac2:'LUZZI G',pcos:['CASTRO','LUZZI G'],logi:'VICTOR: 3 hs antes ambos · ALLUEN: OK 2030 · ANTARES: LUCIO QUERANDI BERNARDO',estado:'encurso'},
+'637':{nro:'637',es:'S',serv:'SAL-ZC',buque:'TIGER PLATA',med:'169.99 x 28.10',eslora:'169.99',manga:'28.10',puntal:'14.20',agen:'AMI',band:'SINGAPUR',fecha:'2026-06-10',hora:'02:00',horaTxt:'ETD 10/ 0200 Hs',desde:'DNA C 5TA',hasta:'ZONA COMÚN',cf:'85',uf:'84.7868',prac:'BERMUDEZ',pcos:['BERMUDEZ'],logi:'SAR: 0130 / MORA',estado:'cerrado',cerradoPor:'BERMUDEZ (práctico)',resumen:'Maniobra sin novedades. Marea creciente, viento SE moderado, visibilidad buena. Sin demoras.'},
+'638':{nro:'638',es:'S',serv:'SAL-ZC',buque:'CABO PILAR',med:'228 x 32.20',eslora:'228',manga:'32.20',puntal:'19.80',agen:'RAIZEN',band:'ARGENTINA',senal:'LW3373',fecha:'2026-06-10',hora:'06:30',horaTxt:'ETD 10/ 0630',desde:'DDI A’',hasta:'ZONA COMÚN',cf:'182',uf:'181.7046',prac:'IGLESIAS',pcos:['IGLESIAS'],logi:'PEDRO: 0600 · ONA TRIUNFO · ETA 0730 KM 11',estado:'pendasesor',obsTxt:'Demora en zarpada a la espera de remolcador.'},
+'639':{nro:'639',es:'S',serv:'SAL-ZC',buque:'JULIO A',med:'120 x 20.40',eslora:'120',manga:'20.40',puntal:'11.90',agen:'RAIZEN',band:'ARGENTINA',fecha:'2026-06-10',hora:'21:00',horaTxt:'POB 10/ 2100 HS',desde:'DDI B',hasta:'ZONA COMÚN',cf:'65',uf:'36.4140',prac:'MILANI',pcos:['MILANI'],logi:'GASTON: 2000 · SR',estado:'asignado'}
+};
+function dbRaw(){try{const v=localStorage.getItem(DB_KEY);return v?JSON.parse(v):MEMDB;}catch(e){return MEMDB;}}
+function dbPut(db){MEMDB=db;try{localStorage.setItem(DB_KEY,JSON.stringify(db));}catch(e){}try{BC&&BC.postMessage('upd');}catch(e){}}
+function dbInit(){let db=dbRaw();if(!db){db={seq:639,desp:JSON.parse(JSON.stringify(SEED_DESP))};dbPut(db);}return db;}
+function asignarNro(){const db=dbInit();db.seq++;dbPut(db);return String(db.seq);}
+function dbWriteOne(d){const db=dbInit();db.desp[d.nro]=Object.assign(db.desp[d.nro]||{},d);dbPut(db);}
+function dbWriteDesp(arr){const db=dbInit();arr.forEach(d=>{if(d&&d.nro)db.desp[d.nro]=Object.assign(db.desp[d.nro]||{},d);});dbPut(db);}
+function dbDeleteDesp(nro){const db=dbInit();delete db.desp[nro];dbPut(db);}
+function pushNotif(msg,kind){
+  try{const db=dbInit();db.notifs=db.notifs||[];
+    db.notifs.push({t:new Date().toISOString(),msg,kind:kind||'info'});
+    if(db.notifs.length>120)db.notifs=db.notifs.slice(-120);dbPut(db);}catch(e){}
+}
+function dbNotifs(){const db=dbInit();return db.notifs||[];}
+function dbLoadDesp(){
+  const db=dbInit();
+  return Object.values(db.desp).filter(d=>d&&d.nro).map(x=>{
+    const d=Object.assign({prac:'',prac2:'',stamps:{},ruta:{},demoras:[],obsChips:[],remol:[],tramos:[],cortes:[],obsTxt:'',resumen:'',logi:'',cal:'',med:'',horaTxt:'',es:'',serv:'',cf:'',uf:'',cpr:'',cpp:'',bow:'',band:'',senal:'',eslora:'',manga:'',puntal:'',agen:'',fecha:'',hora:'',pcos:null,cerradoPor:'',cerradoEn:'',lancha:'',rem:'',cmaq:'si'},x);
+    d.id=d.id||'d'+d.nro;d.nroFinal=d.nroFinal||d.nro;
+    if(!d.pcos||!d.pcos.length)d.pcos=[d.prac].concat(d.prac2?[d.prac2]:[]).filter(Boolean);
+    return d;
+  }).sort((a,b)=>parseInt(a.nro)-parseInt(b.nro));
+}
+
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+function fmtFull(iso){if(!iso)return'';const d=new Date(iso);return pad(d.getDate())+'/'+pad(d.getMonth()+1)+' '+pad(d.getHours())+':'+pad(d.getMinutes());}
+function despView(d){const zc=v=>v==='ZONA COMÚN'?'ZC':(v||'—');const es=d.es||(d.serv==='ENT-ZC'?'E':d.serv==='SAL-ZC'?'S':d.serv==='MOV'?'M':'E');const pcos=(d.pcos&&d.pcos.length)?d.pcos:[d.prac].concat(d.prac2?[d.prac2]:[]).filter(Boolean);return {es,pcos};}
+
+const SIM_COOPS={"COPRAPILBA": {"desc": "Cooperativa de Trabajo de Practicaje y Pilotaje Buenos Aires Ltda.", "rol": "cliente", "data": [{"nro": "1", "fecha": "2026-05-01", "buque": "JULIO A", "agen": "RAIZEN", "pco": "CASTRO", "serv": "SAL-ZC"}, {"nro": "2", "fecha": "2026-05-01", "buque": "CABO VIRGENES", "agen": "RAIZEN", "pco": "SAGRISTA", "serv": "SAL-ZC"}, {"nro": "3", "fecha": "2026-05-02", "buque": "PUNTA QUILLA", "agen": "RAIZEN", "pco": "GIACHINO", "serv": "ENT-ZC"}, {"nro": "4", "fecha": "2026-05-02", "buque": "VALDIVIA STAR", "agen": "MARUBA", "pco": "GORGOSCHIDSE", "serv": "SAL-ZC"}, {"nro": "5", "fecha": "2026-05-03", "buque": "ONE SYNERGY", "agen": "ONE", "pco": "TUBIO D", "serv": "SAL-ZC"}, {"nro": "6", "fecha": "2026-05-03", "buque": "ONE SYNERGY", "agen": "ONE", "pco": "SAGRISTA", "serv": "SAL-ZC"}, {"nro": "7", "fecha": "2026-05-03", "buque": "MAERSK SAN VINCENT", "agen": "MAERSK", "pco": "CASTRO", "serv": "ENT-ZC"}, {"nro": "8", "fecha": "2026-05-03", "buque": "MAERSK SAN VINCENT", "agen": "MAERSK", "pco": "GIACHINO", "serv": "ENT-ZC"}, {"nro": "9", "fecha": "2026-05-04", "buque": "PUNTA QUILLA", "agen": "RAIZEN", "pco": "LUZZI R", "serv": "SAL-ZC"}, {"nro": "10", "fecha": "2026-05-04", "buque": "POLARIS", "agen": "RAIZEN", "pco": "GORGOSCHIDSE", "serv": "SAL-ZC"}, {"nro": "11", "fecha": "2026-05-04", "buque": "TIGER PLATA", "agen": "AMI", "pco": "GORGOSCHIDSE", "serv": "ENT-ZC"}, {"nro": "12", "fecha": "2026-05-04", "buque": "CABO DE HORNOS", "agen": "RAIZEN", "pco": "CASTRO", "serv": "ENT-ZC"}, {"nro": "13", "fecha": "2026-05-04", "buque": "MSC LUDOVICA", "agen": "PISA", "pco": "GIACHINO", "serv": "ENT-ZC"}, {"nro": "14", "fecha": "2026-05-04", "buque": "MSC LUDOVICA", "agen": "PISA", "pco": "G. LUZI", "serv": "ENT-ZC"}, {"nro": "15", "fecha": "2026-05-04", "buque": "MSC CATERINA", "agen": "PISA", "pco": "TUBIO D", "serv": "ENT-ZC"}, {"nro": "16", "fecha": "2026-05-04", "buque": "MSC CATERINA", "agen": "PISA", "pco": "SAGRISTA", "serv": "ENT-ZC"}, {"nro": "17", "fecha": "2026-05-04", "buque": "PALENA STAR", "agen": "RAIZEN", "pco": "DI COLA", "serv": "ENT-ZC"}, {"nro": "18", "fecha": "2026-05-05", "buque": "CALETA ROSARIO", "agen": "OCEANWAY", "pco": "CASTRO", "serv": "MOV"}, {"nro": "19", "fecha": "2026-05-05", "buque": "MAERSK SAN VINCENT", "agen": "MAERSK", "pco": "GORGOSCHIDSE", "serv": "SAL-ZC"}, {"nro": "20", "fecha": "2026-05-05", "buque": "MAERSK SAN VINCENT", "agen": "MAERSK", "pco": "GIACHINO", "serv": "SAL-ZC"}, {"nro": "21", "fecha": "2026-05-05", "buque": "TIGER PLATA", "agen": "AMI", "pco": "TUBIO D", "serv": "SAL-ZC"}, {"nro": "22", "fecha": "2026-05-05", "buque": "BGP PROSPECTOR", "agen": "PISA", "pco": "SAGRISTA", "serv": "ENT-ZC"}, {"nro": "23", "fecha": "2026-05-06", "buque": "CABO DE HORNOS", "agen": "RAIZEN", "pco": "GORGOSCHIDSE", "serv": "SAL-ZC"}, {"nro": "24", "fecha": "2026-05-06", "buque": "SIEMPRE SANTA ROSA", "agen": "CROCE", "pco": "LUZZI R", "serv": "ENT-ZC"}, {"nro": "25", "fecha": "2026-05-06", "buque": "MSC CATERINA", "agen": "PISA", "pco": "TUBIO D", "serv": "SAL-ZC"}, {"nro": "26", "fecha": "2026-05-06", "buque": "MSC CATERINA", "agen": "PISA", "pco": "CASTRO", "serv": "SAL-ZC"}, {"nro": "27", "fecha": "2026-05-06", "buque": "MSC LUDOVICA", "agen": "PISA", "pco": "GIACHINO", "serv": "SAL-ZC"}, {"nro": "28", "fecha": "2026-05-06", "buque": "MSC LUDOVICA", "agen": "PISA", "pco": "SAGRISTA", "serv": "SAL-ZC"}, {"nro": "29", "fecha": "2026-05-06", "buque": "MSC AINO", "agen": "PISA", "pco": "GORGOSCHIDSE", "serv": "ENT-ZC"}, {"nro": "30", "fecha": "2026-05-06", "buque": "MSC AINO", "agen": "PISA", "pco": "G. LUZI", "serv": "ENT-ZC"}, {"nro": "31", "fecha": "2026-05-06", "buque": "CABO PILAR", "agen": "RAIZEN", "pco": "TUBIO D", "serv": "ENT-ZC"}, {"nro": "32", "fecha": "2026-05-06", "buque": "MSC PHOENIX", "agen": "PISA", "pco": "GIACHINO", "serv": "ENT-ZC"}, {"nro": "33", "fecha": "2026-05-06", "buque": "MSC PHOENIX", "agen": "PISA", "pco": "SAGRISTA", "serv": "ENT-ZC"}, {"nro": "34", "fecha": "2026-05-06", "buque": "PALENA STAR", "agen": "RAIZEN", "pco": "CASTRO", "serv": "SAL-ZC"}, {"nro": "35", "fecha": "2026-05-07", "buque": "NAVIOS DOMINO", "agen": "ONE", "pco": "GORGOSCHIDSE", "serv": "ENT-ZC"}, {"nro": "36", "fecha": "2026-05-08", "buque": "CALETA ROSARIO", "agen": "OCEANWAY", "pco": "TUBIO D", "serv": "SAL-ZC"}, {"nro": "37", "fecha": "2026-05-08", "buque": "CABO PILAR", "agen": "RAIZEN", "pco": "CASTRO", "serv": "SAL-ZC"}, {"nro": "38", "fecha": "2026-05-08", "buque": "JULIO A", "agen": "RAIZEN", "pco": "GIACHINO", "serv": "SAL-ZC"}, {"nro": "39", "fecha": "2026-05-08", "buque": "PUNTA QUILLA", "agen": "RAIZEN", "pco": "TUBIO D", "serv": "ENT-ZC"}, {"nro": "40", "fecha": "2026-05-08", "buque": "NAVIOS DOMINO", "agen": "ONE", "pco": "SAGRISTA", "serv": "SAL-ZC"}, {"nro": "41", "fecha": "2026-05-09", "buque": "MSC AINO", "agen": "PISA", "pco": "GORGOSCHIDSE", "serv": "SAL-ZC"}, {"nro": "42", "fecha": "2026-05-09", "buque": "MSC AINO", "agen": "PISA", "pco": "CASTRO", "serv": "SAL-ZC"}, {"nro": "43", "fecha": "2026-05-09", "buque": "LARGO EMERALD", "agen": "ISA", "pco": "GIACHINO", "serv": "SAL-ZC"}, {"nro": "44", "fecha": "2026-05-09", "buque": "MAR ESMERALDA", "agen": "CROCE", "pco": "DELLISANTI", "serv": "SAL-ZC"}, {"nro": "45", "fecha": "2026-05-09", "buque": "PUNTA QUILLA", "agen": "RAIZEN", "pco": "TUBIO D", "serv": "MOV"}, {"nro": "46", "fecha": "2026-05-10", "buque": "MSC PHOENIX", "agen": "PISA", "pco": "SAGRISTA", "serv": "SAL-ZC"}, {"nro": "47", "fecha": "2026-05-10", "buque": "MSC PHOENIX", "agen": "PISA", "pco": "CASTRO", "serv": "SAL-ZC"}, {"nro": "48", "fecha": "2026-05-11", "buque": "CAP SAN TAINARO", "agen": "MAERSK", "pco": "GIACHINO", "serv": "ENT-ZC"}, {"nro": "49", "fecha": "2026-05-11", "buque": "CAP SAN TAINARO", "agen": "MAERSK", "pco": "TUBIO D", "serv": "ENT-ZC"}, {"nro": "50", "fecha": "2026-05-11", "buque": "PUNTA QUILLA", "agen": "RAIZEN", "pco": "SAGRISTA", "serv": "SAL-ZC"}, {"nro": "51", "fecha": "2026-05-11", "buque": "MSC JUDITH", "agen": "PISA", "pco": "GORGOSCHIDSE", "serv": "ENT-ZC"}, {"nro": "52", "fecha": "2026-05-11", "buque": "MSC JUDITH", "agen": "PISA", "pco": "RODRIGUEZ", "serv": "ENT-ZC"}, {"nro": "53", "fecha": "2026-05-11", "buque": "TIGER PLATA", "agen": "AMI", "pco": "CASTRO", "serv": "ENT-ZC"}, {"nro": "54", "fecha": "2026-05-12", "buque": "POLARIS", "agen": "RAIZEN", "pco": "GIACHINO", "serv": "SAL-ZC"}, {"nro": "55", "fecha": "2026-05-13", "buque": "MSC JUDITH", "agen": "PISA", "pco": "NILSSON", "serv": "SAL-ZC"}, {"nro": "56", "fecha": "2026-05-13", "buque": "MSC JUDITH", "agen": "PISA", "pco": "BERMUDEZ", "serv": "SAL-ZC"}, {"nro": "57", "fecha": "2026-05-13", "buque": "MSC INSA", "agen": "PISA", "pco": "MILANI", "serv": "ENT-ZC"}, {"nro": "58", "fecha": "2026-05-13", "buque": "MSC INSA", "agen": "PISA", "pco": "DIAZ", "serv": "ENT-ZC"}, {"nro": "59", "fecha": "2026-05-13", "buque": "TIGER PLATA", "agen": "AMI", "pco": "PEÑA", "serv": "SAL-ZC"}, {"nro": "60", "fecha": "2026-05-13", "buque": "ITHACA", "agen": "ONE", "pco": "BERMUDEZ", "serv": "ENT-ZC"}, {"nro": "61", "fecha": "2026-05-13", "buque": "ASTURIANO III", "agen": "ISS", "pco": "NILSSON", "serv": "ENT-ZC"}, {"nro": "62", "fecha": "2026-05-13", "buque": "CAP SAN TAINARO", "agen": "MAERSK", "pco": "PEÑA", "serv": "SAL-ZC"}, {"nro": "63", "fecha": "2026-05-13", "buque": "CAP SAN TAINARO", "agen": "MAERSK", "pco": "MILANI", "serv": "SAL-ZC"}, {"nro": "64", "fecha": "2026-05-14", "buque": "ITHACA", "agen": "ONE", "pco": "DIAZ", "serv": "SAL-ZC"}, {"nro": "65", "fecha": "2026-05-14", "buque": "TALISMAN", "agen": "CROCE", "pco": "DI COLA", "serv": "ENT-ZC"}, {"nro": "66", "fecha": "2026-05-14", "buque": "TANGO II", "agen": "CROCE", "pco": "BERMUDEZ", "serv": "ENT-ZC"}, {"nro": "67", "fecha": "2026-05-14", "buque": "CABO VIRGENES", "agen": "RAIZEN", "pco": "PEÑA", "serv": "ENT-ZC"}, {"nro": "68", "fecha": "2026-05-14", "buque": "ASTURIANO III", "agen": "ISS", "pco": "NILSSON", "serv": "MOV"}, {"nro": "69", "fecha": "2026-05-14", "buque": "MSC INSA", "agen": "PISA", "pco": "MILANI", "serv": "SAL-ZC"}, {"nro": "70", "fecha": "2026-05-14", "buque": "MSC INSA", "agen": "PISA", "pco": "DIAZ", "serv": "SAL-ZC"}, {"nro": "71", "fecha": "2026-05-15", "buque": "MSC CAROLINA", "agen": "PISA", "pco": "BERMUDEZ", "serv": "ENT-ZC"}, {"nro": "72", "fecha": "2026-05-15", "buque": "MSC CAROLINA", "agen": "PISA", "pco": "NILSSON", "serv": "ENT-ZC"}, {"nro": "73", "fecha": "2026-05-15", "buque": "JULIO A", "agen": "RAIZEN", "pco": "PEÑA", "serv": "ENT-ZC"}, {"nro": "74", "fecha": "2026-05-16", "buque": "CABO VIRGENES", "agen": "RAIZEN", "pco": "MILANI", "serv": "SAL-ZC"}, {"nro": "75", "fecha": "2026-05-16", "buque": "MSC BIANCA", "agen": "PISA", "pco": "DIAZ", "serv": "ENT-ZC"}, {"nro": "76", "fecha": "2026-05-16", "buque": "MSC BIANCA", "agen": "PISA", "pco": "NILSSON", "serv": "ENT-ZC"}, {"nro": "77", "fecha": "2026-05-17", "buque": "MSC CAROLINA", "agen": "PISA", "pco": "BERMUDEZ", "serv": "SAL-ZC"}, {"nro": "78", "fecha": "2026-05-17", "buque": "MSC CAROLINA", "agen": "PISA", "pco": "DI COLA", "serv": "SAL-ZC"}, {"nro": "79", "fecha": "2026-05-17", "buque": "TIGER PLATA", "agen": "AMI", "pco": "MILANI", "serv": "ENT-ZC"}, {"nro": "80", "fecha": "2026-05-18", "buque": "CABO PILAR", "agen": "RAIZEN", "pco": "NILSSON", "serv": "ENT-ZC"}, {"nro": "81", "fecha": "2026-05-18", "buque": "JULIO A", "agen": "RAIZEN", "pco": "PEÑA", "serv": "SAL-ZC"}, {"nro": "82", "fecha": "2026-05-18", "buque": "MSC BIANCA", "agen": "PISA", "pco": "BERMUDEZ", "serv": "SAL-ZC"}, {"nro": "83", "fecha": "2026-05-18", "buque": "MSC BIANCA", "agen": "PISA", "pco": "DIAZ", "serv": "SAL-ZC"}, {"nro": "84", "fecha": "2026-05-18", "buque": "ASTURIANO III", "agen": "ISS", "pco": "MILANI", "serv": "SAL-ZC"}, {"nro": "85", "fecha": "2026-05-18", "buque": "TIGER PLATA", "agen": "AMI", "pco": "PEÑA", "serv": "SAL-ZC"}, {"nro": "86", "fecha": "2026-05-19", "buque": "CABO PILAR", "agen": "RAIZEN", "pco": "PEÑA", "serv": "SAL-ZC"}, {"nro": "87", "fecha": "2026-05-19", "buque": "BREMENHAVEN EXPRESS", "agen": "HAPAG", "pco": "BERMUDEZ", "serv": "SAL-ZC"}, {"nro": "88", "fecha": "2026-05-19", "buque": "SANTA LORETTA", "agen": "PISA", "pco": "DIAZ", "serv": "ENT-ZC"}, {"nro": "89", "fecha": "2026-05-19", "buque": "SANTA LORETTA", "agen": "PISA", "pco": "NILSSON", "serv": "ENT-ZC"}, {"nro": "90", "fecha": "2026-05-20", "buque": "ASTURIANO III", "agen": "ISS", "pco": "MILANI", "serv": "ENT-ZC"}, {"nro": "91", "fecha": "2026-05-21", "buque": "POLARIS", "agen": "RAIZEN", "pco": "BERMUDEZ", "serv": "SAL-ZC"}, {"nro": "92", "fecha": "2026-05-21", "buque": "ASTURIANO III", "agen": "ISS", "pco": "NILSSON", "serv": "MOV"}, {"nro": "93", "fecha": "2026-05-21", "buque": "SANTA LORETTA", "agen": "PISA", "pco": "DIAZ", "serv": "SAL-ZC"}, {"nro": "94", "fecha": "2026-05-21", "buque": "SANTA LORETTA", "agen": "PISA", "pco": "PEÑA", "serv": "SAL-ZC"}, {"nro": "95", "fecha": "2026-05-21", "buque": "WIDE HOTEL", "agen": "ONE", "pco": "MILANI", "serv": "ENT-ZC"}, {"nro": "96", "fecha": "2026-05-21", "buque": "NAVIOS VERDE", "agen": "ONE", "pco": "NILSSON", "serv": "ENT-ZC"}, {"nro": "97", "fecha": "2026-05-22", "buque": "BGP PROSPECTOR", "agen": "PISA", "pco": "BERMUDEZ", "serv": "SAL-ZC"}, {"nro": "98", "fecha": "2026-05-22", "buque": "WIDE HOTEL", "agen": "ONE", "pco": "PEÑA", "serv": "SAL-ZC"}, {"nro": "99", "fecha": "2026-05-22", "buque": "NAVIOS VERDE", "agen": "ONE", "pco": "NILSSON", "serv": "SAL-ZC"}, {"nro": "100", "fecha": "2026-05-22", "buque": "TIGER PLATA", "agen": "AMI", "pco": "MILANI", "serv": "ENT-ZC"}, {"nro": "101", "fecha": "2026-05-23", "buque": "SPIRIT OF DUBAI", "agen": "ONE", "pco": "BERMUDEZ", "serv": "ENT-ZC"}, {"nro": "102", "fecha": "2026-05-23", "buque": "CABO DE HORNOS", "agen": "RAIZEN", "pco": "PEÑA", "serv": "ENT-ZC"}, {"nro": "103", "fecha": "2026-05-23", "buque": "JULIO A", "agen": "RAIZEN", "pco": "NILSSON", "serv": "SAL-ZC"}, {"nro": "104", "fecha": "2026-05-23", "buque": "SPIRIT OF DUBAI", "agen": "ONE", "pco": "DIAZ", "serv": "SAL-ZC"}, {"nro": "105", "fecha": "2026-05-23", "buque": "TIGER PLATA", "agen": "AMI", "pco": "MILANI", "serv": "SAL-ZC"}, {"nro": "106", "fecha": "2026-05-24", "buque": "CABO DE HORNOS", "agen": "RAIZEN", "pco": "BERMUDEZ", "serv": "SAL-ZC"}, {"nro": "107", "fecha": "2026-05-26", "buque": "MSC URSULA VI", "agen": "PISA", "pco": "PEÑA", "serv": "ENT-ZC"}, {"nro": "108", "fecha": "2026-05-26", "buque": "PHEASANT", "agen": "AMI", "pco": "MILANI", "serv": "ENT-ZC"}, {"nro": "109", "fecha": "2026-05-27", "buque": "MSC URSULA VI", "agen": "PISA", "pco": "TUBIO D", "serv": "SAL-ZC"}, {"nro": "110", "fecha": "2026-05-28", "buque": "PEHASANT", "agen": "AMI", "pco": "SAGRISTA", "serv": "SAL-ZC"}, {"nro": "111", "fecha": "2026-05-28", "buque": "SINAR SUMATERA", "agen": "ONE", "pco": "MILANI", "serv": "ENT-ZC"}, {"nro": "112", "fecha": "2026-05-28", "buque": "CABO VIRGENES", "agen": "RAIZEN", "pco": "GORGOSCHIDSE", "serv": "ENT-ZC"}, {"nro": "113", "fecha": "2026-05-28", "buque": "SANTIAGO I", "agen": "CROCE", "pco": "GIACHINO", "serv": "VTA"}, {"nro": "114", "fecha": "2026-05-28", "buque": "TIGER PLATA", "agen": "AMI", "pco": "TUBIO D", "serv": "ENT-ZC"}, {"nro": "115", "fecha": "2026-05-28", "buque": "JULIO A", "agen": "RAIZEN", "pco": "SAGRISTA", "serv": "SAL-ZC"}, {"nro": "116", "fecha": "2026-05-29", "buque": "SINAR SUMATERA", "agen": "ONE", "pco": "MILANI", "serv": "SAL-ZC"}, {"nro": "117", "fecha": "2026-05-30", "buque": "CABO VIRGENES", "agen": "RAIZEN", "pco": "GORGOSCHIDSE", "serv": "SAL-ZC"}, {"nro": "118", "fecha": "2026-05-30", "buque": "MSC BASEL V", "agen": "PISA", "pco": "GIACHINO", "serv": "ENT-ZC"}, {"nro": "119", "fecha": "2026-05-30", "buque": "MSC BASEL V", "agen": "PISA", "pco": "GORGOSCHIDSE", "serv": "ENT-ZC"}, {"nro": "120", "fecha": "2026-05-30", "buque": "TIGER PLATA", "agen": "AMI", "pco": "TUBIO D", "serv": "SAL-ZC"}, {"nro": "121", "fecha": "2026-05-30", "buque": "MSC CHLOE", "agen": "PISA", "pco": "SAGRISTA", "serv": "ENT-ZC"}, {"nro": "122", "fecha": "2026-05-30", "buque": "MSC CHLOE", "agen": "PISA", "pco": "DELLISANTI", "serv": "ENT-ZC"}, {"nro": "123", "fecha": "2026-05-31", "buque": "CABO PILAR", "agen": "RAIZEN", "pco": "GORGOSCHIDSE", "serv": "ENT-ZC"}, {"nro": "124", "fecha": "2026-05-31", "buque": "MSC BASEL V", "agen": "PISA", "pco": "GIACHINO", "serv": "SAL-ZC"}, {"nro": "125", "fecha": "2026-05-31", "buque": "MSC BASEL V", "agen": "PISA", "pco": "TUBIO D", "serv": "SAL-ZC"}, {"nro": "126", "fecha": "2026-05-31", "buque": "POLARIS", "agen": "RAIZEN", "pco": "SAGRISTA", "serv": "SAL-ZC"}]}, "GET": {"desc": "GETPILOT S.A. — servicios de practicaje", "rol": "otra", "data": [{"nro": "70", "fecha": "2026-05-03", "buque": "COSTA RICA EXPRESS", "pco": "RODRIGUEZ", "cal": "9.9", "desde": "EXOLGAN III", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "71", "fecha": "2026-05-04", "buque": "EVER FAIR", "pco": "PECETTO", "cal": "9.95", "desde": "ZC", "hasta": "DNA C TRP", "serv": "ENT-ZC"}, {"nro": "72", "fecha": "2026-05-04", "buque": "EVER FAIR", "pco": "RODRIGUEZ", "cal": "9.95", "desde": "ZC", "hasta": "DNA C TRP", "serv": "ENT-ZC"}, {"nro": "73", "fecha": "2026-05-06", "buque": "EVER FAIR", "pco": "PECETTO", "cal": "9.95", "desde": "DNA C TRP", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "74", "fecha": "2026-05-06", "buque": "EVER FAIR", "pco": "RODRIGUEZ", "cal": "9.95", "desde": "DNA C TRP", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "75", "fecha": "2026-05-07", "buque": "LARGO EMERALD", "pco": "PECETTO", "cal": "7.8", "desde": "ZC", "hasta": "DDI E", "serv": "ENT-ZC"}, {"nro": "76", "fecha": "2026-05-09", "buque": "XIAMEN EXPRESS", "pco": "PECETTO", "cal": "9.8", "desde": "ZC", "hasta": "EXOLGAN II", "serv": "ENT-ZC"}, {"nro": "77", "fecha": "2026-05-09", "buque": "XIAMEN EXPRESS", "pco": "RODRIGUEZ", "cal": "9.8", "desde": "ZC", "hasta": "EXOLGAN II", "serv": "ENT-ZC"}, {"nro": "78", "fecha": "2026-05-09", "buque": "LARGO EMERALD", "pco": "GIACHINO", "cal": "8", "desde": "DDI E", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "79", "fecha": "2026-05-11", "buque": "XIAMEN EXPRESS", "pco": "PECETTO", "cal": "9.5", "desde": "EXOLGAN II", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "80", "fecha": "2026-05-11", "buque": "XIAMEN EXPRESS", "pco": "RODRIGUEZ", "cal": "9.5", "desde": "EXOLGAN II", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "81", "fecha": "2026-05-13", "buque": "JAZAN", "pco": "PECETTO", "cal": "9.5", "desde": "ZC", "hasta": "EXOLGAN III", "serv": "ENT-ZC"}, {"nro": "82", "fecha": "2026-05-13", "buque": "JAZAN", "pco": "RODRIGUEZ", "cal": "9.5", "desde": "ZC", "hasta": "EXOLGAN III", "serv": "ENT-ZC"}, {"nro": "83", "fecha": "2026-05-14", "buque": "SAO PAULO EXPRESS", "pco": "PECETTO", "cal": "10", "desde": "ZC", "hasta": "EXOLGAN II", "serv": "ENT-ZC"}, {"nro": "84", "fecha": "2026-05-14", "buque": "SAO PAULO EXPRESS", "pco": "RODRIGUEZ", "cal": "10", "desde": "ZC", "hasta": "EXOLGAN II", "serv": "ENT-ZC"}, {"nro": "85", "fecha": "2026-05-15", "buque": "JAZAN", "pco": "PECETTO", "cal": "10", "desde": "EXOLGAN III", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "86", "fecha": "2026-05-15", "buque": "JAZAN", "pco": "RODRIGUEZ", "cal": "10", "desde": "EXOLGAN III", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "87", "fecha": "2026-05-16", "buque": "SAO PAULO EXPRESS", "pco": "PECETTO", "cal": "10", "desde": "EXOLGAN II", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "88", "fecha": "2026-05-16", "buque": "SAO PAULO EXPRESS", "pco": "RODRIGUEZ", "cal": "10", "desde": "EXOLGAN II", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "89", "fecha": "2026-05-18", "buque": "BREMENHAVEN EXPRESS", "pco": "PECETTO", "cal": "9.6", "desde": "ZC", "hasta": "EXOLGAN II", "serv": "ENT-ZC"}, {"nro": "90", "fecha": "2026-05-18", "buque": "BREMENHAVEN EXPRESS", "pco": "RODRIGUEZ", "cal": "9.6", "desde": "ZC", "hasta": "EXOLGAN II", "serv": "ENT-ZC"}, {"nro": "91", "fecha": "2026-05-19", "buque": "BREMENHAVEN EXPRESS", "pco": "PECETTO", "cal": "", "desde": "EXOLGAN II", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "92", "fecha": "2026-05-19", "buque": "BREMENHAVEN EXPRESS", "pco": "BERMUDEZ", "cal": "", "desde": "EXOLGAN II", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "93", "fecha": "2026-05-23", "buque": "PUNTA LOYOLA", "pco": "LUZI R.", "cal": "7.9", "desde": "LA PLATA", "hasta": "DDI F", "serv": "MOV"}, {"nro": "94", "fecha": "2026-05-25", "buque": "CZECH", "pco": "PECETTO", "cal": "9.6", "desde": "ZC", "hasta": "EXOLGAN II", "serv": "ENT-ZC"}, {"nro": "95", "fecha": "2026-05-25", "buque": "CZECH", "pco": "RODRIGUEZ", "cal": "9.6", "desde": "ZC", "hasta": "EXOLGAN II", "serv": "ENT-ZC"}, {"nro": "96", "fecha": "2026-05-26", "buque": "PUNTA LOYOLA", "pco": "LUZI R.", "cal": "", "desde": "DDI F", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "97", "fecha": "2026-05-26", "buque": "CZECH", "pco": "PECETTO", "cal": "10", "desde": "EXOLGAN II", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "98", "fecha": "2026-05-26", "buque": "CZECH", "pco": "RODRIGUEZ", "cal": "10", "desde": "EXOLGAN II", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "99", "fecha": "2026-05-26", "buque": "GINGA BOBCAT", "pco": "RODRIGUEZ", "cal": "5.8", "desde": "ZC", "hasta": "SYNCRO", "serv": "ENT-ZC"}, {"nro": "100", "fecha": "2026-05-27", "buque": "CAPE PONEER", "pco": "PECETTO", "cal": "", "desde": "ZC", "hasta": "EXOLGAN III", "serv": "ENT-ZC"}, {"nro": "101", "fecha": "2026-05-28", "buque": "SANTA CATARINA EXPRESS", "pco": "RODRIGUEZ", "cal": "", "desde": "ZC", "hasta": "EXOLGAN II", "serv": "ENT-ZC"}, {"nro": "102", "fecha": "2026-05-28", "buque": "SANTA CATARINA EXPRESS", "pco": "LUZI R.", "cal": "", "desde": "ZC", "hasta": "EXOLGAN II", "serv": "ENT-ZC"}, {"nro": "103", "fecha": "2026-05-29", "buque": "CAPE PONEER", "pco": "PECETTO", "cal": "", "desde": "EXOLGAN III", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "104", "fecha": "2026-05-29", "buque": "CAPE PONEER", "pco": "RODRIGUEZ", "cal": "", "desde": "EXOLGAN III", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "105", "fecha": "2026-05-30", "buque": "SANTA CATARINA EXPRESS", "pco": "PECETTO", "cal": "10", "desde": "EXOLGAN III", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "106", "fecha": "2026-05-30", "buque": "SANTA CATARINA EXPRESS", "pco": "RODRIGUEZ", "cal": "10", "desde": "EXOLGAN III", "hasta": "ZC", "serv": "SAL-ZC"}]}, "CONTRA": {"desc": "Contraparte / otras cooperativas (servicios de la competencia observados)", "rol": "competencia", "data": [{"nro": "1", "fecha": "2026-05-01", "buque": "MAERSK LONDRINA", "pco": "NEGRI", "cal": "10", "desde": "ZC", "hasta": "T4 DNA C", "serv": "ENT-ZC"}, {"nro": "2", "fecha": "2026-05-01", "buque": "MAERSK LONDRINA", "pco": "BORRELLI", "cal": "10", "desde": "ZC", "hasta": "T4 DNA C", "serv": "ENT-ZC"}, {"nro": "3", "fecha": "2026-05-01", "buque": "MERCOSUL SANTOS", "pco": "MAC KENZIE", "cal": "7.8", "desde": "ZC", "hasta": "DDI B", "serv": "ENT-ZC"}, {"nro": "4", "fecha": "2026-05-02", "buque": "MERCOSUL SANTOS", "pco": "NEGRI", "cal": "8.6", "desde": "DDI B", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "5", "fecha": "2026-05-03", "buque": "XIN CHANG SHA", "pco": "BERTOCHI", "cal": "9.6", "desde": "ZC", "hasta": "DNA C TRP", "serv": "ENT-ZC"}, {"nro": "6", "fecha": "2026-05-03", "buque": "MAERSK FORTALEZA", "pco": "BORRELLI", "cal": "", "desde": "ZC", "hasta": "4TO ESPIGON", "serv": "ENT-ZC"}, {"nro": "7", "fecha": "2026-05-03", "buque": "MAERSK FORTALEZA", "pco": "BANINI F.", "cal": "", "desde": "ZC", "hasta": "4TO ESPIGON", "serv": "ENT-ZC"}, {"nro": "8", "fecha": "2026-05-03", "buque": "ARIANE", "pco": "G. LUZZI", "cal": "8", "desde": "ZC", "hasta": "DDI A PRIMA", "serv": "ENT-ZC"}, {"nro": "9", "fecha": "2026-05-03", "buque": "MAERSK LONDRINA", "pco": "NEGRI", "cal": "10", "desde": "T4 DNA C", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "10", "fecha": "2026-05-03", "buque": "MAERSK LONDRINA", "pco": "BORRELLI", "cal": "10", "desde": "T4 DNA C", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "11", "fecha": "2026-05-03", "buque": "ARGENTINO II", "pco": "MAC KENZIE", "cal": "7.8", "desde": "ZC", "hasta": "EXOLGAN III", "serv": "ENT-ZC"}, {"nro": "12", "fecha": "2026-05-03", "buque": "LOG IN RESILIENTE", "pco": "DI COLA", "cal": "8.7", "desde": "ZC", "hasta": "DNA B TRP", "serv": "ENT-ZC"}, {"nro": "13", "fecha": "2026-05-04", "buque": "XIN CHANG SHA", "pco": "REGUEIRO", "cal": "9.4", "desde": "DNA C TRP", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "14", "fecha": "2026-05-04", "buque": "MAERSK FORTALEZA", "pco": "BANINI F.", "cal": "9.8", "desde": "4TO ESPIGON", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "15", "fecha": "2026-05-04", "buque": "MAERSK FORTALEZA", "pco": "MAC KENZIE", "cal": "9.8", "desde": "4TO ESPIGON", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "16", "fecha": "2026-05-04", "buque": "ARIANE", "pco": "LUZZI R.", "cal": "8", "desde": "DDI A PRIMA", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "17", "fecha": "2026-05-04", "buque": "ARGENTINO II", "pco": "BORRELLI", "cal": "", "desde": "EXOLGAN III", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "18", "fecha": "2026-05-04", "buque": "LOG IN RESILIENTE", "pco": "DELISANTI", "cal": "9.7", "desde": "DNA B TRP", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "19", "fecha": "2026-05-04", "buque": "MERCOSUL ITAJAI", "pco": "MAC KENZIE", "cal": "9.4", "desde": "ZC", "hasta": "DNA B TRP", "serv": "ENT-ZC"}, {"nro": "20", "fecha": "2026-05-07", "buque": "SAN MARCO MAERSK", "pco": "NEGRI", "cal": "9.7", "desde": "ZC", "hasta": "T4 DNA C", "serv": "ENT-ZC"}, {"nro": "21", "fecha": "2026-05-07", "buque": "SAN MARCO MAERSK", "pco": "BORRELLI", "cal": "9.7", "desde": "ZC", "hasta": "T4 DNA C", "serv": "ENT-ZC"}, {"nro": "22", "fecha": "2026-05-07", "buque": "GEORGIA ATH", "pco": "LUZZI R.", "cal": "", "desde": "ZC", "hasta": "DOCK SUD 11", "serv": "ENT-ZC"}, {"nro": "23", "fecha": "2026-05-08", "buque": "MERCOSUL ITAJAI", "pco": "MAC KENZIE", "cal": "9.4", "desde": "ZC", "hasta": "DNA B TRP", "serv": "ENT-ZC"}, {"nro": "24", "fecha": "2026-05-09", "buque": "SAN MARCO MAERSK", "pco": "NEGRI", "cal": "9.7", "desde": "T4 DNA C", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "25", "fecha": "2026-05-09", "buque": "SAN MARCO MAERSK", "pco": "BORRELLI", "cal": "9.7", "desde": "T4 DNA C", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "26", "fecha": "2026-05-09", "buque": "ARIANE", "pco": "DI COLA", "cal": "8", "desde": "ZC", "hasta": "DDI A PRIMA", "serv": "ENT-ZC"}, {"nro": "27", "fecha": "2026-05-09", "buque": "MERCOSUL ITAJAI", "pco": "BANINI F.", "cal": "9.1", "desde": "DNA B TRP", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "28", "fecha": "2026-05-09", "buque": "GEORGIA ATH", "pco": "LUZZI R.", "cal": "6.09", "desde": "DOCK SUD 11", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "29", "fecha": "2026-05-11", "buque": "MAERSK FRANKFURT", "pco": "MAC KENZIE", "cal": "9.7", "desde": "ZC", "hasta": "T4 DNA C", "serv": "ENT-ZC"}, {"nro": "30", "fecha": "2026-05-11", "buque": "MAERSK FRANKFURT", "pco": "NEGRI", "cal": "9.7", "desde": "ZC", "hasta": "T4 DNA C", "serv": "ENT-ZC"}, {"nro": "31", "fecha": "2026-05-11", "buque": "LOGIN POLARIS", "pco": "BERTOCHI", "cal": "", "desde": "ZC", "hasta": "DNA B TRP", "serv": "ENT-ZC"}, {"nro": "32", "fecha": "2026-05-12", "buque": "ARIANE", "pco": "G. LUZZI", "cal": "", "desde": "DDI A PRIMA", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "33", "fecha": "2026-05-12", "buque": "MELINA", "pco": "DI COLA", "cal": "", "desde": "ZC", "hasta": "4TO ESPIGON", "serv": "ENT-ZC"}, {"nro": "34", "fecha": "2026-05-12", "buque": "MAERSK FRANKFURT", "pco": "BORRELLI", "cal": "", "desde": "4TO ESPIGON", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "35", "fecha": "2026-05-12", "buque": "MAERSK FRANKFURT", "pco": "MAC KENZIE", "cal": "", "desde": "4TO ESPIGON", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "36", "fecha": "2026-05-13", "buque": "LOGIN POLARIS", "pco": "BERTOCHI", "cal": "9", "desde": "DNA B TRP", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "37", "fecha": "2026-05-13", "buque": "MELINA", "pco": "DELISANTI", "cal": "9.7", "desde": "4TO ESPIGON", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "38", "fecha": "2026-05-13", "buque": "CALETA ROSARIO", "pco": "G. LUZZI", "cal": "7.7", "desde": "ZC", "hasta": "DDI A", "serv": "ENT-ZC"}, {"nro": "39", "fecha": "2026-05-14", "buque": "MAERSK LINS", "pco": "NEGRI", "cal": "", "desde": "ZC", "hasta": "T4 DNA C", "serv": "ENT-ZC"}, {"nro": "40", "fecha": "2026-05-14", "buque": "MAERSK LINS", "pco": "BORRELLI", "cal": "", "desde": "ZC", "hasta": "T4 DNA C", "serv": "ENT-ZC"}, {"nro": "41", "fecha": "2026-05-14", "buque": "SEATLE C", "pco": "G. LUZZI", "cal": "8.85", "desde": "ZC", "hasta": "DNA B TRP", "serv": "ENT-ZC"}, {"nro": "42", "fecha": "2026-05-15", "buque": "SEATLE C", "pco": "DELISANTI", "cal": "9.9", "desde": "DNA B TRP", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "43", "fecha": "2026-05-15", "buque": "MERCOSUL SANTOS", "pco": "BANINI F.", "cal": "8.9", "desde": "ZC", "hasta": "DNA B TRP", "serv": "ENT-ZC"}, {"nro": "44", "fecha": "2026-05-15", "buque": "KOTA EBONY", "pco": "MAC KENZIE", "cal": "10", "desde": "ZC", "hasta": "DNA C TRP", "serv": "ENT-ZC"}, {"nro": "45", "fecha": "2026-05-15", "buque": "KOTA EBONY", "pco": "BORRELLI", "cal": "10", "desde": "ZC", "hasta": "DNA C TRP", "serv": "ENT-ZC"}, {"nro": "46", "fecha": "2026-05-15", "buque": "CALETA ROSARIO", "pco": "BERTOCHI", "cal": "5", "desde": "DDI A", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "47", "fecha": "2026-05-16", "buque": "MERCOSUL SANTOS", "pco": "BANINI F.", "cal": "8.9", "desde": "DNA B TRP", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "48", "fecha": "2026-05-16", "buque": "MAERSK LINS", "pco": "NEGRI", "cal": "10", "desde": "T4 DNA C", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "49", "fecha": "2026-05-16", "buque": "MAERSK LINS", "pco": "MAC KENZIE", "cal": "10", "desde": "T4 DNA C", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "50", "fecha": "2026-05-16", "buque": "BANGLAR ARJAN", "pco": "BORRELLI", "cal": "6.4", "desde": "ZC", "hasta": "TANDANOR", "serv": "ENT-ZC"}, {"nro": "51", "fecha": "2026-05-17", "buque": "BANGLAR ARJAN", "pco": "BORRELLI", "cal": "6.4", "desde": "TANDANOR", "hasta": "TANDANOR", "serv": "MOV"}, {"nro": "52", "fecha": "2026-05-17", "buque": "KOTA EBONY", "pco": "NEGRI", "cal": "10", "desde": "DNA C TRP", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "53", "fecha": "2026-05-17", "buque": "KOTA EBONY", "pco": "BORRELLI", "cal": "10", "desde": "DNA C TRP", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "54", "fecha": "2026-05-17", "buque": "MERCOSUL SUAPE", "pco": "MAC KENZIE", "cal": "8.6", "desde": "ZC", "hasta": "DNA B TRP", "serv": "ENT-ZC"}, {"nro": "55", "fecha": "2026-05-19", "buque": "SAN FRANCISCA", "pco": "BANINI F.", "cal": "9.7", "desde": "ZC", "hasta": "T4 DNA C", "serv": "ENT-ZC"}, {"nro": "56", "fecha": "2026-05-19", "buque": "SAN FRANCISCA", "pco": "MAC KENZIE", "cal": "9.7", "desde": "ZC", "hasta": "T4 DNA C", "serv": "ENT-ZC"}, {"nro": "57", "fecha": "2026-05-19", "buque": "FELIXTOWE", "pco": "BERTOCHI", "cal": "", "desde": "ZC", "hasta": "4TO ESPIGON", "serv": "ENT-ZC"}, {"nro": "58", "fecha": "2026-05-20", "buque": "FELIXTOWE", "pco": "DELISANTI", "cal": "8.6", "desde": "4TO ESPIGON", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "59", "fecha": "2026-05-20", "buque": "ARGENTINO II", "pco": "BANINI F.", "cal": "8.2", "desde": "ZC", "hasta": "4TO ESPIGON", "serv": "ENT-ZC"}, {"nro": "60", "fecha": "2026-05-21", "buque": "MERCOSUL ITAJAI", "pco": "NEGRI", "cal": "8.65", "desde": "ZC", "hasta": "DNA B TRP", "serv": "ENT-ZC"}, {"nro": "61", "fecha": "2026-05-21", "buque": "MAERSK LETICIA", "pco": "BANINI F.", "cal": "9.9", "desde": "ZC", "hasta": "T4 DNA C", "serv": "ENT-ZC"}, {"nro": "62", "fecha": "2026-05-21", "buque": "MAERSK LETICIA", "pco": "MAC KENZIE", "cal": "9.9", "desde": "ZC", "hasta": "T4 DNA C", "serv": "ENT-ZC"}, {"nro": "63", "fecha": "2026-05-21", "buque": "ARGENTINO II", "pco": "BORRELLI", "cal": "", "desde": "4TO ESPIGON", "hasta": "DNA C TRP", "serv": "MOV"}, {"nro": "64", "fecha": "2026-05-22", "buque": "ARGENTINO II", "pco": "BORRELLI", "cal": "8", "desde": "DNA C TRP", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "65", "fecha": "2026-05-22", "buque": "ARGENTINO II", "pco": "BORRELLI", "cal": "8.1", "desde": "ZC", "hasta": "EXOLGAN III", "serv": "ENT-ZC"}, {"nro": "66", "fecha": "2026-05-23", "buque": "MERCOSUL ITAJAI", "pco": "NEGRI", "cal": "9.9", "desde": "DNA B TRP", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "67", "fecha": "2026-05-23", "buque": "ARGENTINO II", "pco": "BORRELLI", "cal": "9.3", "desde": "EXOLGAN III", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "68", "fecha": "2026-05-23", "buque": "MAERSK LETICIA", "pco": "BANINI F.", "cal": "", "desde": "T4 DNA C", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "69", "fecha": "2026-05-23", "buque": "MAERSK LETICIA", "pco": "MAC KENZIE", "cal": "", "desde": "T4 DNA C", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "70", "fecha": "2026-05-24", "buque": "ZIM USA", "pco": "REGUEIRO", "cal": "10", "desde": "ZC", "hasta": "T4 DNA C", "serv": "ENT-ZC"}, {"nro": "71", "fecha": "2026-05-24", "buque": "ZIM USA", "pco": "LUZZI R.", "cal": "10", "desde": "ZC", "hasta": "T4 DNA C", "serv": "ENT-ZC"}, {"nro": "72", "fecha": "2026-05-24", "buque": "EVER FAST", "pco": "G. LUZZI", "cal": "", "desde": "ZC", "hasta": "DNA C TRP", "serv": "ENT-ZC"}, {"nro": "73", "fecha": "2026-05-24", "buque": "EVER FAST", "pco": "DI COLA", "cal": "", "desde": "ZC", "hasta": "DNA C TRP", "serv": "ENT-ZC"}, {"nro": "74", "fecha": "2026-05-24", "buque": "MAERSK FREEPORT", "pco": "BORRELLI", "cal": "9.9", "desde": "ZC", "hasta": "4TO ESPIGON", "serv": "ENT-ZC"}, {"nro": "75", "fecha": "2026-05-24", "buque": "MAERSK FREEPORT", "pco": "MAC KENZIE", "cal": "9.9", "desde": "ZC", "hasta": "4TO ESPIGON", "serv": "ENT-ZC"}, {"nro": "76", "fecha": "2026-05-25", "buque": "LOGIN JATOBA", "pco": "BERTOCHI", "cal": "8.2", "desde": "ZC", "hasta": "DNA B TRP", "serv": "ENT-ZC"}, {"nro": "77", "fecha": "2026-05-26", "buque": "EVER FAST", "pco": "G. LUZZI", "cal": "", "desde": "DNA C TRP", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "78", "fecha": "2026-05-26", "buque": "EVER FAST", "pco": "DI COLA", "cal": "", "desde": "DNA C TRP", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "79", "fecha": "2026-05-26", "buque": "MAERSK FREEPORT", "pco": "NEGRI", "cal": "", "desde": "4TO ESPIGON", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "80", "fecha": "2026-05-26", "buque": "MAERSK FREEPORT", "pco": "BORRELLI", "cal": "", "desde": "4TO ESPIGON", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "81", "fecha": "2026-05-26", "buque": "LOGIN JATOBA", "pco": "BERTOCHI", "cal": "", "desde": "DNA B TRP", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "82", "fecha": "2026-05-26", "buque": "LONCOMILLA", "pco": "DI COLA", "cal": "", "desde": "ZC", "hasta": "T4 DNA C", "serv": "ENT-ZC"}, {"nro": "83", "fecha": "2026-05-26", "buque": "ZIM USA", "pco": "REGUEIRO", "cal": "", "desde": "T4 DNA C", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "84", "fecha": "2026-05-26", "buque": "ZIM USA", "pco": "LUZZI R.", "cal": "", "desde": "T4 DNA C", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "85", "fecha": "2026-05-27", "buque": "LONCOMILLA", "pco": "REGUEIRO", "cal": "9.2", "desde": "T4 DNA C", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "86", "fecha": "2026-05-28", "buque": "BANGLAR ARJAN", "pco": "BORRELLI", "cal": "", "desde": "SYNCRO", "hasta": "TANDANOR", "serv": "MOV"}, {"nro": "87", "fecha": "2026-05-28", "buque": "BANGLAR ARJAN", "pco": "MAC KENZIE", "cal": "", "desde": "TANDANOR", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "88", "fecha": "2026-05-28", "buque": "PALENA STAR", "pco": "REGUEIRO", "cal": "6.2", "desde": "5TO ESPIGON", "hasta": "DOCK SUD 12", "serv": "MOV"}, {"nro": "89", "fecha": "2026-05-29", "buque": "MAERSK LA PAZ", "pco": "BORRELLI", "cal": "", "desde": "ZC", "hasta": "T4 DNA C", "serv": "ENT-ZC"}, {"nro": "90", "fecha": "2026-05-29", "buque": "MAERSK LA PAZ", "pco": "BANINI F.", "cal": "", "desde": "ZC", "hasta": "T4 DNA C", "serv": "ENT-ZC"}, {"nro": "91", "fecha": "2026-05-30", "buque": "AYANE", "pco": "REGUEIRO", "cal": "", "desde": "ZC", "hasta": "DNA E NTE", "serv": "ENT-ZC"}, {"nro": "92", "fecha": "2026-05-30", "buque": "MAERSK LA PAZ", "pco": "BORRELLI", "cal": "", "desde": "T4 DNA C", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "93", "fecha": "2026-05-30", "buque": "MAERSK LA PAZ", "pco": "BANINI F.", "cal": "", "desde": "T4 DNA C", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "94", "fecha": "2026-05-30", "buque": "XIN WEI HAI", "pco": "LUZZI R.", "cal": "8.9", "desde": "ZC", "hasta": "DNA C TRP", "serv": "ENT-ZC"}, {"nro": "95", "fecha": "2026-05-30", "buque": "MAERSK MONTE AZUL", "pco": "NEGRI", "cal": "9.5", "desde": "ZC", "hasta": "4TO ESPIGON", "serv": "ENT-ZC"}, {"nro": "96", "fecha": "2026-05-30", "buque": "MAERSK MONTE AZUL", "pco": "BANINI F.", "cal": "9.5", "desde": "ZC", "hasta": "4TO ESPIGON", "serv": "ENT-ZC"}, {"nro": "97", "fecha": "2026-05-31", "buque": "PALENA STAR", "pco": "DI COLA", "cal": "5.5", "desde": "DOCK SUD 12", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "98", "fecha": "2026-05-31", "buque": "XIN WEI HAI", "pco": "G. LUZZI", "cal": "9.6", "desde": "DNA C TRP", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "99", "fecha": "2026-05-31", "buque": "PAULINO C", "pco": "BERTOCHI", "cal": "7.8", "desde": "ZC", "hasta": "DOCK SUD 11", "serv": "ENT-ZC"}, {"nro": "100", "fecha": "2026-05-31", "buque": "MAERSK MONTE AZUL", "pco": "BORRELLI", "cal": "", "desde": "4TO ESPIGON", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "101", "fecha": "2026-05-31", "buque": "MAERSK MONTE AZUL", "pco": "MAC KENZIE", "cal": "", "desde": "4TO ESPIGON", "hasta": "ZC", "serv": "SAL-ZC"}, {"nro": "102", "fecha": "2026-05-31", "buque": "SAN LORENZO MAERSK", "pco": "MAC KENZIE", "cal": "9.9", "desde": "ZC", "hasta": "T4 DNA C", "serv": "ENT-ZC"}, {"nro": "103", "fecha": "2026-05-31", "buque": "SAN LORENZO MAERSK", "pco": "BORRELLI", "cal": "9.9", "desde": "ZC", "hasta": "T4 DNA C", "serv": "ENT-ZC"}, {"nro": "104", "fecha": "2026-05-31", "buque": "ATHANASIA", "pco": "LUZZI R.", "cal": "6.23", "desde": "ZC", "hasta": "DOCK SUD 12", "serv": "ENT-ZC"}]}};
+const COOP_INFO={
+ COPRAPILBA:{razon:'Cooperativa de Trabajo de Practicaje y Pilotaje Buenos Aires Ltda.',sede:'Venezuela 110, Piso 17° G — C.A.B.A.'},
+ GET:{razon:'GETPILOT S.A.',sede:'Buenos Aires'},
+ CONTRA:{razon:'Competencia — servicios observados en el puerto',sede:'—'}
+};
+
+/* ===== Reloj + clima en vivo de Puerto Madero (Open-Meteo, sin clave) ===== */
+function _wIcon(code,day){
+  if(code===0)return day?'☀️':'🌙';
+  if(code<=2)return day?'🌤️':'☁️';
+  if(code===3)return '☁️';
+  if(code>=45&&code<=48)return '🌫️';
+  if(code>=51&&code<=67)return '🌧️';
+  if(code>=71&&code<=77)return '🌨️';
+  if(code>=80&&code<=82)return '🌦️';
+  if(code>=95)return '⛈️';
+  return '🌡️';
+}
+function _wTxt(code){
+  const m={0:'Despejado',1:'Mayorm. despejado',2:'Parc. nublado',3:'Nublado',45:'Niebla',48:'Niebla',51:'Llovizna',53:'Llovizna',55:'Llovizna',61:'Lluvia',63:'Lluvia',65:'Lluvia fuerte',80:'Chaparrones',81:'Chaparrones',82:'Chaparrones fuertes',95:'Tormenta',96:'Tormenta'};
+  return m[code]||'—';
+}
+function startHeaderLive(){
+  function tick(){
+    const d=new Date();
+    const dias=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    const mes=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    const f=dias[d.getDay()]+' '+d.getDate()+' '+mes[d.getMonth()]+' '+d.getFullYear();
+    const h=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0');
+    const ef=document.getElementById('hl-fecha'),eh=document.getElementById('hl-hora');
+    if(ef)ef.textContent=f; if(eh)eh.textContent=h;
+  }
+  tick(); setInterval(tick,1000);
+  function clima(){
+    fetch('https://api.open-meteo.com/v1/forecast?latitude=-34.61&longitude=-58.36&current=temperature_2m,weather_code,wind_speed_10m,is_day&timezone=America%2FArgentina%2FBuenos_Aires')
+      .then(r=>r.json()).then(j=>{
+        const c=j.current;if(!c)return;
+        const el=document.getElementById('hl-clima');
+        if(el)el.innerHTML='<span style="font-size:16px">'+_wIcon(c.weather_code,c.is_day)+'</span> '+Math.round(c.temperature_2m)+'°C · '+_wTxt(c.weather_code)+' · viento '+Math.round(c.wind_speed_10m)+' km/h';
+      }).catch(e=>{const el=document.getElementById('hl-clima');if(el)el.innerHTML='🌡️ clima no disponible offline';});
+  }
+  clima(); setInterval(clima,600000);
+}
+
+function readTerc(){try{const v=localStorage.getItem('guardia_terceros');return v?JSON.parse(v):[];}catch(e){return [];}}
+let DSP=dbLoadDesp();let TERC=readTerc();let RNG='mes';
+let FSEL={mes:'2026-05',ano:new Date().getFullYear(),desde:'',hasta:''};
+function inRange(fecha,r){
+  if(r==='all')return true;
+  if(!fecha)return false;
+  fecha=fecha.slice(0,10);
+  const d=new Date(fecha+'T00:00:00'),now=new Date();
+  if(r==='dia')return fecha===now.toISOString().slice(0,10);
+  if(r==='ano')return d.getFullYear()===now.getFullYear();
+  if(r==='mes')return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth();
+  if(r==='sem'){const ms=now-d;return ms>=0&&ms<7*864e5;}
+  if(r==='messel')return fecha.slice(0,7)===FSEL.mes;
+  if(r==='anosel')return d.getFullYear()===+FSEL.ano;
+  if(r==='rango'){if(!FSEL.desde||!FSEL.hasta)return true;return fecha>=FSEL.desde&&fecha<=FSEL.hasta;}
+  return false;
+}
+function man(d){return (d.pcos&&d.pcos.length)||(d.prac2?2:1);}
+function fdate(d){return d.fecha||(d.creado||'').slice(0,10);}
+function groupBars(list,keyfn,host,cls){
+  const m={};list.forEach(d=>{const ks=keyfn(d);(Array.isArray(ks)?ks:[ks]).forEach(k=>{if(!k)return;m[k]=(m[k]||0)+1;});});
+  const arr=Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const mx=Math.max(1,...arr.map(x=>x[1]));
+  $(host).innerHTML=arr.length?arr.map(([k,v])=>'<div class="bar-row"><div class="bl">'+k+'</div><div class="bt"><i class="'+(cls||'')+'" style="width:'+(v/mx*100)+'%"></i></div><div class="bv">'+v+'</div></div>').join(''):'<div class="empty">Sin datos en el período.</div>';
+}
+function render(){
+  const list=DSP.filter(d=>inRange(fdate(d),RNG));
+  const maniobras=list.reduce((a,d)=>a+man(d),0);
+  const ent=list.filter(d=>(d.serv||'').startsWith('ENT')||d.es==='E').length;
+  const sal=list.filter(d=>(d.serv||'').startsWith('SAL')||d.es==='S').length;
+  const cer=list.filter(d=>d.estado==='cerrado').length;
+  $('kpis').innerHTML=
+    '<div class="kpi"><div class="v">'+list.length+'</div><div class="l">Despachos</div></div>'+
+    '<div class="kpi k2"><div class="v">'+maniobras+'</div><div class="l">Maniobras (puntos)</div></div>'+
+    '<div class="kpi k3"><div class="v">'+ent+' / '+sal+'</div><div class="l">Entradas / Salidas</div></div>'+
+    '<div class="kpi k4"><div class="v">'+cer+'</div><div class="l">Cerrados</div></div>';
+  // serie temporal
+  const now=new Date();let buckets=[];
+  if(RNG==='dia'){for(let h=0;h<24;h+=3){buckets.push({lab:pad(h)+'h',test:d=>{const dd=new Date((d.creado||fdate(d)+'T00:00:00'));return fdate(d)===now.toISOString().slice(0,10)&&dd.getHours()>=h&&dd.getHours()<h+3;}});}}
+  else if(RNG==='sem'){for(let i=6;i>=0;i--){const day=new Date(now-i*864e5);const ds=day.toISOString().slice(0,10);buckets.push({lab:['DO','LU','MA','MI','JU','VI','SA'][day.getDay()],test:d=>fdate(d)===ds});}}
+  else if(RNG==='mes'){for(let i=0;i<4;i++){buckets.push({lab:'Sem '+(i+1),test:d=>{const day=new Date(fdate(d)+'T00:00:00');return day.getMonth()===now.getMonth()&&day.getFullYear()===now.getFullYear()&&Math.floor((day.getDate()-1)/7)===i;}});}}
+  else{const M=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];for(let m=0;m<12;m++){buckets.push({lab:M[m],test:d=>{const day=new Date(fdate(d)+'T00:00:00');return day.getMonth()===m&&(RNG==='all'||day.getFullYear()===now.getFullYear());}});}}
+  const counts=buckets.map(b=>DSP.filter(d=>(RNG==='all'?true:inRange(fdate(d),RNG))&&b.test(d)).length);
+  const mx=Math.max(1,...counts);
+  $('spark').innerHTML=buckets.map((b,i)=>'<div class="col"><div class="cv">'+counts[i]+'</div><div class="bar" style="height:'+(counts[i]/mx*110)+'px"></div><div class="cl">'+b.lab+'</div></div>').join('');
+  // agrupaciones
+  groupBars(list,d=>d.agen,'byAgen');
+  groupBars(list,d=>despView(d).pcos,'byPrac','g');
+  groupBars(list,d=>d.buque,'byBuque');
+  groupBars(list,d=>{const v=despView(d);return (d.serv==='ENT-ZC'||v.es==='E')?(d.hasta||'—'):(d.serv==='SAL-ZC'||v.es==='S')?(d.desde||'—'):(d.desde||'—');},'byZona','o');
+  // tabla por naviera
+  const ag={};list.forEach(d=>{const k=d.agen||'—';ag[k]=ag[k]||{d:0,m:0,e:0,s:0,c:0};ag[k].d++;ag[k].m+=man(d);const v=despView(d);if((d.serv||'').startsWith('ENT')||v.es==='E')ag[k].e++;if((d.serv||'').startsWith('SAL')||v.es==='S')ag[k].s++;if(d.estado==='cerrado')ag[k].c++;});
+  const rows=Object.entries(ag).sort((a,b)=>b[1].d-a[1].d);
+  $('tblAgen').querySelector('tbody').innerHTML=rows.length?rows.map(([k,o])=>'<tr><td>'+k+'</td><td class="n">'+o.d+'</td><td class="n">'+o.m+'</td><td class="n">'+o.e+'</td><td class="n">'+o.s+'</td><td class="n">'+o.c+'</td></tr>').join(''):'<tr><td colspan="6" class="empty">Sin datos en el período.</td></tr>';
+  renderComparativo();
+}
+function pieSVG(parts){ // parts: [{label,val,color}]
+  const tot=parts.reduce((a,p)=>a+p.val,0)||1;
+  const R=100,cx=110,cy=110;let ang=-Math.PI/2;
+  let paths='';
+  parts.forEach(p=>{
+    const frac=p.val/tot,a2=ang+frac*Math.PI*2;
+    if(frac<=0){return;}
+    if(frac>=0.9999){paths+='<circle cx="'+cx+'" cy="'+cy+'" r="'+R+'" fill="'+p.color+'"/>';ang=a2;return;}
+    const x1=cx+R*Math.cos(ang),y1=cy+R*Math.sin(ang);
+    const x2=cx+R*Math.cos(a2),y2=cy+R*Math.sin(a2);
+    const large=frac>0.5?1:0;
+    paths+='<path d="M'+cx+','+cy+' L'+x1.toFixed(1)+','+y1.toFixed(1)+' A'+R+','+R+' 0 '+large+',1 '+x2.toFixed(1)+','+y2.toFixed(1)+' Z" fill="'+p.color+'"/>';
+    ang=a2;
+  });
+  return '<svg width="220" height="220" viewBox="0 0 220 220">'+paths+'<circle cx="110" cy="110" r="52" fill="#fff"/>'+
+    '<text x="110" y="104" text-anchor="middle" font-size="13" fill="#436072" font-weight="bold">TOTAL</text>'+
+    '<text x="110" y="126" text-anchor="middle" font-size="22" fill="#11293a" font-weight="bold">'+tot+'</text></svg>';
+}
+let SIMMODE='vivo';
+const COOPCOL={COPRAPILBA:'#0a7d8c',GET:'#8a6a2f',CONTRA:'#bb352c'};
+const ROLBADGE={cliente:['Cliente','rgba(10,125,140,.12)','#0a7d8c'],otra:['Otra cooperativa','rgba(138,106,47,.12)','#8a6a2f'],competencia:['Competencia','rgba(187,53,44,.1)','#bb352c']};
+function simInRange(fecha){return inRange((fecha||'').slice(0,10),RNG);}
+function renderComparativo(){
+  if(SIMMODE==='sim'){renderComparativoSim();return;}
+  $('coopcards').innerHTML='';
+  const propios=DSP.filter(d=>inRange(fdate(d),RNG)&&d.estado!=='anulado');
+  const terc=TERC.filter(t=>inRange(t.fecha,RNG));
+  const nP=propios.length,nT=terc.length,tot=nP+nT;
+  const COLP='#0a7d8c',COLT='#8a6a2f';
+  $('cmpPie').innerHTML=pieSVG([{label:'Asociación',val:nP,color:COLP},{label:'Otras cooperativas',val:nT,color:COLT}]);
+  const pct=v=>tot?Math.round(v/tot*100):0;
+  $('cmpLegend').innerHTML=
+    '<div class="li"><span class="dot" style="background:'+COLP+'"></span><span class="nm">Asociación <span class="ct2">(servicios propios)</span></span><span class="pc">'+pct(nP)+'%</span></div>'+
+    '<div class="li"><span class="dot" style="background:'+COLT+'"></span><span class="nm">Otras cooperativas <span class="ct2">(observados)</span></span><span class="pc">'+pct(nT)+'%</span></div>'+
+    '<div class="li" style="border-top:1px solid var(--line2);padding-top:10px;margin-top:2px"><span class="nm">Total movimientos del puerto</span><span class="pc">'+tot+'</span></div>';
+  $('cmpBars').innerHTML='<div class="cmpbar"><div class="top"><b>Distribución de movimientos</b><span>'+nP+' propios · '+nT+' otras</span></div>'+
+    '<div class="track"><i style="width:'+pct(nP)+'%;background:'+COLP+'"></i><i style="width:'+pct(nT)+'%;background:'+COLT+'"></i></div></div>';
+  const byCoop={};terc.forEach(t=>{const k=t.coop||'—';byCoop[k]=(byCoop[k]||0)+1;});
+  const arr=Object.entries(byCoop).sort((a,b)=>b[1]-a[1]);
+  if(arr.length){
+    const mx=Math.max(nP,...arr.map(x=>x[1]),1);
+    let html='<div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:6px 0 10px">Movimientos por operador</div>';
+    html+='<div class="cmpbar"><div class="top"><b>Asociación</b><span>'+nP+'</span></div><div class="track"><i style="width:'+(nP/mx*100)+'%;background:'+COLP+'"></i></div></div>';
+    arr.forEach(([k,v])=>{html+='<div class="cmpbar"><div class="top"><b>'+k+'</b><span>'+v+'</span></div><div class="track"><i style="width:'+(v/mx*100)+'%;background:'+COLT+'"></i></div></div>';});
+    $('cmpCoops').innerHTML=html;
+  } else $('cmpCoops').innerHTML='';
+  $('cmpNote').innerHTML='ⓘ El comparativo contrasta los servicios propios de la asociación con los servicios de otras cooperativas <b>observados y registrados</b> en la guardia (sección GET/CONTRA). No representa la operación interna ni la facturación de terceros, que no es información disponible.';
+}
+function renderComparativoSim(){
+  const keys=['COPRAPILBA','GET','CONTRA'];
+  const counts={},tot0=()=>0;
+  keys.forEach(k=>{counts[k]=(SIM_COOPS[k].data||[]).filter(r=>simInRange(r.fecha)).length;});
+  const tot=keys.reduce((a,k)=>a+counts[k],0)||1;
+  const pct=v=>Math.round(v/tot*100);
+  // tarjetas
+  $('coopcards').innerHTML=keys.map(k=>{
+    const c=SIM_COOPS[k],rb=ROLBADGE[c.rol]||ROLBADGE.otra,info=COOP_INFO[k]||{};
+    const dat=(SIM_COOPS[k].data||[]).filter(r=>simInRange(r.fecha));
+    const topOf=fn=>{const m={};dat.forEach(r=>{const v=fn(r);if(v)m[v]=(m[v]||0)+1;});const a=Object.entries(m).sort((x,y)=>y[1]-x[1])[0];return a?a[0]:'—';};
+    return '<div class="coopcard" style="border-top-color:'+COOPCOL[k]+'">'+
+      '<div class="ac" style="color:'+COOPCOL[k]+'">'+k+'</div>'+
+      '<div class="full">'+(info.razon||c.desc)+'</div>'+
+      '<div class="big">'+counts[k]+'</div><div class="sub">servicios · '+pct(counts[k])+'% del puerto</div>'+
+      '<div style="font-size:10.5px;color:var(--muted);margin-top:8px;line-height:1.5">🚢 Buque frecuente: <b>'+topOf(r=>r.buque)+'</b><br>⚓ Práctico top: <b>'+topOf(r=>r.pco)+'</b></div>'+
+      '<span class="rol" style="background:'+rb[1]+';color:'+rb[2]+'">'+rb[0]+'</span></div>';
+  }).join('');
+  // torta
+  $('cmpPie').innerHTML=pieSVG(keys.map(k=>({label:k,val:counts[k],color:COOPCOL[k]})));
+  $('cmpLegend').innerHTML=keys.map(k=>
+    '<div class="li"><span class="dot" style="background:'+COOPCOL[k]+'"></span><span class="nm">'+k+' <span class="ct2">'+(SIM_COOPS[k].rol==='cliente'?'(cliente)':SIM_COOPS[k].rol==='competencia'?'(competencia)':'(otra)')+'</span></span><span class="pc">'+pct(counts[k])+'%</span></div>'
+  ).join('')+'<div class="li" style="border-top:1px solid var(--line2);padding-top:10px;margin-top:2px"><span class="nm">Total movimientos del puerto</span><span class="pc">'+tot+'</span></div>';
+  // barra apilada
+  $('cmpBars').innerHTML='<div class="cmpbar"><div class="top"><b>Distribución de movimientos del puerto</b><span>'+tot+' servicios</span></div><div class="track">'+
+    keys.map(k=>'<i style="width:'+pct(counts[k])+'%;background:'+COOPCOL[k]+'" title="'+k+'"></i>').join('')+'</div></div>';
+  // barras por cooperativa
+  const mx=Math.max(...keys.map(k=>counts[k]),1);
+  let html='<div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:6px 0 10px">Servicios por cooperativa</div>';
+  keys.sort((a,b)=>counts[b]-counts[a]).forEach(k=>{
+    html+='<div class="cmpbar"><div class="top"><b>'+k+'</b><span>'+counts[k]+' ('+pct(counts[k])+'%)</span></div><div class="track"><i style="width:'+(counts[k]/mx*100)+'%;background:'+COOPCOL[k]+'"></i></div></div>';
+  });
+  $('cmpCoops').innerHTML=html;
+  $('cmpNote').innerHTML='ⓘ <b>Modo simulación con datos reales de mayo 2026</b> (planilla del cliente). COPRAPILBA: '+SIM_COOPS.COPRAPILBA.desc+'. GET: '+SIM_COOPS.GET.desc+'. CONTRA: '+SIM_COOPS.CONTRA.desc+'. Seleccioná el período “Mes” o “Histórico” para ver todos los registros.';
+}
+$('simtog').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  $('simtog').querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  SIMMODE=b.dataset.m;
+  $('simInfo').textContent=SIMMODE==='sim'?'Datos reales de la planilla (mayo 2026): COPRAPILBA, GET y CONTRA.':'Datos cargados en el sistema.';
+  renderComparativo();
+});
+(function(){const ya=new Date().getFullYear();let o='';for(let y=ya;y>=ya-6;y--)o+='<option>'+y+'</option>';$('f-ano').innerHTML=o;})();
+function syncFiltros(){
+  const v=$('f-periodo').value;RNG=v;
+  $('fg-mes').style.display=(v==='messel')?'flex':'none';
+  $('fg-ano').style.display=(v==='anosel')?'flex':'none';
+  $('fg-rango').classList.toggle('on',v==='rango');
+  FSEL.mes=$('f-mes').value;FSEL.ano=$('f-ano').value;FSEL.desde=$('f-desde').value;FSEL.hasta=$('f-hasta').value;
+  render();
+}
+['f-periodo','f-mes','f-ano','f-desde','f-hasta'].forEach(id=>{const e=$(id);if(e)e.addEventListener('change',syncFiltros);});
+if(BC)BC.onmessage=()=>{DSP=dbLoadDesp();TERC=readTerc();render();};
+setInterval(()=>{DSP=dbLoadDesp();TERC=readTerc();render();},3000);
+startHeaderLive();
+render();
+</script>
+</body>
+</html>
