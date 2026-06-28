@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a1f2e">
+<title>BITÁCORA · Estadísticas</title>
+<style>
+  :root{
+    --bg:#eef2f5;--bg2:#ffffff;--panel:#ffffff;--panel2:#e7eef2;
+    --line:#b9c9d3;--line2:#d9e3e9;--ink:#11293a;--muted:#436072;--muted2:#6f8694;
+    --cyan:#0a7d8c;--cyan-d:#0a5f6b;--amber:#a96b06;--green:#1e7d4f;--red:#bb352c;
+    --gold:#8a6a2f;--gold2:#6e5318;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+  .app{display:flex;flex-direction:column;min-height:100vh}
+  header{flex:none;display:flex;align-items:center;gap:11px;padding:13px 16px;background:var(--bg2);border-bottom:1px solid var(--line)}
+  .mark svg{width:28px;height:28px}
+  .ht h1{font-size:17px;font-weight:800;letter-spacing:.3px}
+  .ht p{font-size:11px;color:var(--muted)}
+  .xnav{display:flex;gap:0;background:var(--bg2);border-bottom:1px solid var(--line)}
+  .xnav a{flex:1;text-align:center;padding:10px 4px;font-size:12px;font-weight:600;color:var(--muted);text-decoration:none;border-bottom:2px solid transparent}
+  .xnav a.act{color:var(--cyan);border-bottom-color:var(--cyan)}
+  main{flex:1;padding:16px;max-width:700px;margin:0 auto;width:100%}
+  .card{background:var(--panel);border-radius:12px;padding:18px;margin-bottom:14px;border:1px solid var(--line2)}
+  .card-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:14px}
+  .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .stat{background:var(--bg);border-radius:8px;padding:12px;text-align:center}
+  .stat-n{font-size:28px;font-weight:800;color:var(--cyan)}
+  .stat-l{font-size:11px;color:var(--muted);margin-top:2px}
+  .prac-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line2)}
+  .prac-row:last-child{border-bottom:none}
+  .prac-name{font-size:14px;font-weight:600}
+  .prac-pts{font-size:14px;font-weight:700;color:var(--cyan)}
+  .bar-wrap{flex:1;margin:0 12px;background:var(--line2);border-radius:4px;height:6px}
+  .bar-fill{height:6px;border-radius:4px;background:var(--cyan)}
+  .empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:14px}
+  select{padding:8px 12px;border:1.5px solid var(--line2);border-radius:8px;font-size:14px;background:var(--bg);color:var(--ink);width:100%}
+  .login-overlay{position:fixed;inset:0;background:#0a1f2e;display:flex;align-items:center;justify-content:center;padding:24px;z-index:999}
+  .login-box{background:#fff;border-radius:14px;padding:28px;width:100%;max-width:360px}
+  .login-box input{width:100%;padding:11px 14px;border:1.5px solid #d9e3e9;border-radius:8px;font-size:15px;margin-bottom:12px;background:#eef2f5;color:#11293a;outline:none}
+  .login-box button{width:100%;padding:13px;background:#0a7d8c;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer}
+  .err{color:#bb352c;font-size:13px;margin-top:8px;display:none}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-overlay" id="login-overlay">
+  <div>
+    <svg viewBox="0 0 680 200" style="width:100%;max-width:300px;display:block;margin:0 auto 20px">
+      <rect width="680" height="200" fill="#0a1f2e" rx="14"/>
+      <g transform="translate(340,90)">
+        <circle cx="0" cy="0" r="48" fill="none" stroke="#c9a84c" stroke-width="1.2" opacity="0.4"/>
+        <circle cx="0" cy="-12" r="5" fill="none" stroke="#c9a84c" stroke-width="1.8"/>
+        <line x1="0" y1="-7" x2="0" y2="18" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="-15" y1="3" x2="15" y2="3" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M0 18 C-9 13 -15 8 -15 3" fill="none" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M0 18 C9 13 15 8 15 3" fill="none" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/>
+        <circle cx="-15" cy="3" r="2" fill="#c9a84c"/>
+        <circle cx="15" cy="3" r="2" fill="#c9a84c"/>
+        <path d="M-7 -13 L0 -20 L7 -13" fill="none" stroke="#e8402a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="0" y1="-20" x2="0" y2="-12" stroke="#e8402a" stroke-width="1.4" stroke-linecap="round"/>
+      </g>
+      <text x="340" y="158" text-anchor="middle" font-family="Georgia,serif" font-size="16" font-weight="700" letter-spacing="4" fill="#c9a84c">COPRAPILBA</text>
+      <text x="340" y="174" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" letter-spacing="1.5" fill="#8aa8bc">PLATAFORMA BITÁCORA · ESTADÍSTICAS</text>
+    </svg>
+    <div class="login-box">
+      <input id="lu" type="text" placeholder="Usuario" autocapitalize="none">
+      <input id="lp" type="password" placeholder="Contraseña">
+      <button id="lb">Entrar</button>
+      <div class="err" id="lerr"></div>
+    </div>
+  </div>
+</div>
+
+<div class="app" id="main-app" style="display:none">
+  <header>
+    <div class="mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="url(#g)" stroke-width="1.7" stroke-linecap="round">
+        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e7c987"/><stop offset="1" stop-color="#34d3df"/></linearGradient></defs>
+        <circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="2.3" fill="#34d3df" stroke="none"/>
+      </svg>
+    </div>
+    <div class="ht"><h1>BITÁCORA</h1><p>Estadísticas operativas</p></div>
+  </header>
+  <div class="xnav">
+    <a href="./">📋 Vale</a>
+    <a href="guardia.html">🗼 Guardia</a>
+    <a href="estadisticas.html" class="act">📊 Estadísticas</a>
+  </div>
+
+  <main>
+    <div class="card">
+      <div class="card-title">Período</div>
+      <select id="sel-periodo" onchange="cargar()">
+        <option value="7">Últimos 7 días</option>
+        <option value="30" selected>Últimos 30 días</option>
+        <option value="90">Últimos 90 días</option>
+        <option value="365">Último año</option>
+        <option value="0">Todo</option>
+      </select>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Resumen operativo</div>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-n" id="s-total">—</div><div class="stat-l">Despachos</div></div>
+        <div class="stat"><div class="stat-n" id="s-cerrados">—</div><div class="stat-l">Cerrados</div></div>
+        <div class="stat"><div class="stat-n" id="s-asignados">—</div><div class="stat-l">En curso / asignados</div></div>
+        <div class="stat"><div class="stat-n" id="s-anulados">—</div><div class="stat-l">Anulados</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Trabajos por práctico</div>
+      <div id="lista-practicos"><div class="empty">Cargando…</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Servicios por tipo</div>
+      <div id="lista-servicios"><div class="empty">Cargando…</div></div>
+    </div>
+  </main>
+</div>
+
+<script>
+const API_BASE = 'https://floralwhite-peafowl-843054.hostingersite.com';
+let TOKEN = null;
+
+async function login(u, p) {
+  try {
+    const r = await fetch(API_BASE + '/api/login', {
+      method: 'POST', credentials: 'include',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({usuario: u, password: p})
+    });
+    const j = await r.json();
+    if (j.ok) { TOKEN = j.token; return true; }
+    return false;
+  } catch(e) { return false; }
+}
+
+async function checkSession() {
+  try {
+    const t = localStorage.getItem('BIT_TOKEN');
+    if (!t) return false;
+    const r = await fetch(API_BASE + '/api/me', {
+      credentials: 'include', headers: {'Authorization':'Bearer '+t}
+    });
+    if (!r.ok) return false;
+    TOKEN = t; return true;
+  } catch(e) { return false; }
+}
+
+function h() { return {'Content-Type':'application/json','Authorization':'Bearer '+TOKEN}; }
+
+async function cargar() {
+  const dias = +document.getElementById('sel-periodo').value;
+  const r = await fetch(API_BASE + '/api/despachos', {credentials:'include', headers: h()});
+  if (!r.ok) return;
+  let despachos = await r.json();
+
+  // Filtrar por período
+  if (dias > 0) {
+    const desde = new Date(Date.now() - dias * 86400000);
+    despachos = despachos.filter(d => d.fecha && new Date(d.fecha) >= desde);
+  }
+
+  // Stats generales
+  document.getElementById('s-total').textContent = despachos.length;
+  document.getElementById('s-cerrados').textContent = despachos.filter(d => d.estado === 'cerrado').length;
+  document.getElementById('s-asignados').textContent = despachos.filter(d => ['asignado','encurso','nominado'].includes(d.estado)).length;
+  document.getElementById('s-anulados').textContent = despachos.filter(d => d.estado === 'anulado').length;
+
+  // Por práctico
+  const porPrac = {};
+  despachos.forEach(d => {
+    if (d.prac) porPrac[d.prac] = (porPrac[d.prac] || 0) + 1;
+    if (d.prac2) porPrac[d.prac2] = (porPrac[d.prac2] || 0) + 1;
+  });
+  const pracs = Object.entries(porPrac).sort((a,b) => b[1]-a[1]);
+  const maxP = pracs[0] ? pracs[0][1] : 1;
+  document.getElementById('lista-practicos').innerHTML = pracs.length
+    ? pracs.map(([n,c]) => `<div class="prac-row">
+        <span class="prac-name">${n}</span>
+        <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(c/maxP*100)}%"></div></div>
+        <span class="prac-pts">${c}</span>
+      </div>`).join('')
+    : '<div class="empty">Sin datos en el período</div>';
+
+  // Por tipo de servicio
+  const porServ = {};
+  despachos.forEach(d => { if (d.servicio) porServ[d.servicio] = (porServ[d.servicio] || 0) + 1; });
+  const servs = Object.entries(porServ).sort((a,b) => b[1]-a[1]);
+  const maxS = servs[0] ? servs[0][1] : 1;
+  document.getElementById('lista-servicios').innerHTML = servs.length
+    ? servs.map(([n,c]) => `<div class="prac-row">
+        <span class="prac-name">${n}</span>
+        <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(c/maxS*100)}%"></div></div>
+        <span class="prac-pts">${c}</span>
+      </div>`).join('')
+    : '<div class="empty">Sin datos en el período</div>';
+}
+
+// Login
+document.getElementById('lb').onclick = async () => {
+  const u = document.getElementById('lu').value.trim();
+  const p = document.getElementById('lp').value;
+  if (!u || !p) return;
+  document.getElementById('lb').textContent = 'Conectando…';
+  const ok = await login(u, p);
+  document.getElementById('lb').textContent = 'Entrar';
+  if (ok) {
+    localStorage.setItem('BIT_TOKEN', TOKEN);
+    document.getElementById('login-overlay').style.display = 'none';
+    document.getElementById('main-app').style.display = 'flex';
+    cargar();
+  } else {
+    const e = document.getElementById('lerr');
+    e.textContent = 'Usuario o contraseña incorrectos.';
+    e.style.display = 'block';
+  }
+};
+document.getElementById('lp').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('lb').click(); });
+document.getElementById('lu').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('lp').focus(); });
+
+// Auto-login si hay sesión guardada
+(async () => {
+  const ok = await checkSession();
+  if (ok) {
+    document.getElementById('login-overlay').style.display = 'none';
+    document.getElementById('main-app').style.display = 'flex';
+    cargar();
+  }
+})();
+</script>
+</body>
+</html>
