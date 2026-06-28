@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#eef2f5">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%230a2236%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%279%27 fill=%27none%27 stroke=%27%23e7c987%27 stroke-width=%271.6%27/%3E%3Cpath d=%27M16 6v20M6 16h20%27 stroke=%27%23e7c987%27 stroke-width=%271.4%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%272.3%27 fill=%27%2334d3df%27/%3E%3C/svg%3E">
+<title>BITÁCORA Móvil · Vale del Práctico</title>
+<style>
+  :root{
+    --bg:#eef2f5;--bg2:#ffffff;--panel:#ffffff;--panel2:#e7eef2;
+    --line:#b9c9d3;--line2:#d9e3e9;--ink:#11293a;--muted:#436072;--muted2:#6f8694;
+    --cyan:#0a7d8c;--cyan-d:#0a5f6b;--amber:#a96b06;--green:#1e7d4f;--red:#bb352c;
+    --gold:#8a6a2f;--gold2:#6e5318;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased}
+  .app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+  header{flex:none;display:flex;align-items:center;gap:11px;padding:13px 16px;background:var(--bg2);border-bottom:1px solid var(--line)}
+  .mark{width:34px;height:34px;border-radius:9px;flex:none;background:radial-gradient(circle at 35% 30%,#123243,#081521);border:1px solid #1f3e52;display:grid;place-items:center}
+  .mark svg{width:19px;height:19px}
+  .ht h1{font-size:16px;font-weight:800;letter-spacing:2.5px;background:linear-gradient(90deg,var(--gold2),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .ht p{font-size:9.5px;letter-spacing:1px;color:var(--muted);text-transform:uppercase}
+  .hsp{flex:1}
+  .net{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:6px 10px;border-radius:999px;border:1px solid}
+  .net.on{color:var(--green);border-color:rgba(30,125,79,.4);background:rgba(30,125,79,.08)}
+  .net.off{color:var(--amber);border-color:rgba(169,107,6,.4);background:rgba(169,107,6,.08)}
+  .net .d{width:7px;height:7px;border-radius:50%;background:currentColor}
+  nav{flex:none;display:flex;background:var(--bg2);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+  nav button{flex:1;padding:11px 4px 13px;background:none;border:none;color:var(--muted);font-family:inherit;font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
+  nav button svg{width:21px;height:21px}
+  nav button.on{color:var(--cyan)}
+  nav button .bdg{position:absolute;transform:translate(12px,-4px);background:var(--amber);color:#ffffff;font-size:9px;font-weight:800;min-width:15px;height:15px;border-radius:8px;display:grid;place-items:center;padding:0 4px}
+  main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0}
+  .pane{display:none;padding:15px 15px 26px;animation:fade .22s ease}
+  .pane.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+  .sec{font-size:11px;font-weight:800;letter-spacing:1.4px;color:var(--muted);text-transform:uppercase;margin:14px 0 10px;display:flex;align-items:center;justify-content:space-between}
+  .sec:first-child{margin-top:4px}
+  .sec .cnt{font-size:10.5px;color:var(--cyan);background:rgba(10,125,140,.08);border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-weight:700}
+  .dlist{display:flex;flex-direction:column;gap:9px}
+    .nro.sinnro{color:#8a6d3b;background:#fcf3e2;padding:1px 8px;border-radius:6px}
+  .dcard-acts{display:flex;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+  .dca{flex:1;padding:9px;border-radius:8px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer}
+  .dca:hover{background:#f3f8fa}
+  .dca.asig{background:#8a6d3b;color:#fff;border-color:#8a6d3b}
+  .dca.asig:hover{background:#6f572e}
+  .dcard{background:var(--panel);border:1px solid var(--line2);border-radius:13px;padding:13px 14px;cursor:pointer;transition:.13s}
+  .dcard:active{transform:scale(.985)}
+  .dcard .top{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+  .dcard .nro{font-size:14px;font-weight:800;letter-spacing:.5px;color:var(--gold2)}
+  .dcard .st{margin-left:auto;font-size:9px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;padding:4px 9px;border-radius:7px;border:1px solid;white-space:nowrap}
+  .dcard .ln{font-size:14px;color:#33505f;margin-bottom:3px}
+  .dcard .ln b{color:var(--ink)}
+  .dcard .mt{font-size:11.5px;color:var(--muted2)}
+  .empty{border:1.5px dashed var(--line);border-radius:13px;padding:28px 18px;text-align:center;color:var(--muted2);font-size:12.5px;line-height:1.6}
+  .fcard{background:var(--panel);border:1px solid var(--line2);border-radius:14px;padding:16px;margin-bottom:13px}
+  .fld{margin-bottom:13px}
+  .fld:last-child{margin-bottom:2px}
+  .fld label{display:block;font-size:11px;font-weight:800;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+  .fld label b{color:var(--cyan)}
+  .fld input,.fld select,.fld textarea{width:100%;background:var(--bg2);border:1.5px solid var(--line);color:var(--ink);padding:13px;border-radius:11px;font-family:inherit;font-size:16px;outline:none;appearance:none;-webkit-appearance:none}
+  .fld select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236f8a9c' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:38px}
+  .fld :focus{border-color:var(--cyan-d)}
+  .fld textarea{min-height:80px;resize:vertical}
+  .fld .ro{background:var(--panel2);color:var(--gold2);font-weight:700;border-style:dashed}
+  .frow{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  .frow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+  .hint{font-size:10px;color:var(--muted2);margin-top:5px;line-height:1.45}
+  .btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:15px;border-radius:13px;border:none;font-family:inherit;font-size:15.5px;font-weight:800;letter-spacing:.6px;cursor:pointer;transition:.13s;text-transform:uppercase}
+  .btn:active{transform:scale(.98)}
+  .btn.pri{background:linear-gradient(135deg,var(--cyan-d),var(--cyan));color:#ffffff}
+  .btn.gold{background:linear-gradient(135deg,#a9854a,var(--gold2));color:#ffffff}
+  .btn.ghost{background:var(--panel2);color:var(--cyan);border:1.5px solid var(--cyan-d)}
+  .btn.warn{background:rgba(169,107,6,.14);color:var(--amber);border:1.5px solid rgba(169,107,6,.5)}
+  .btn.sm{padding:11px;font-size:12.5px;border-radius:11px}
+  .stamp{display:flex;align-items:center;gap:11px;background:var(--bg2);border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:10px}
+  .stamp:last-child{margin-bottom:0}
+  .stamp .si{flex:1;min-width:0}
+  .stamp .sl{font-size:10px;font-weight:800;letter-spacing:.9px;color:var(--muted);text-transform:uppercase}
+  .stamp .sv{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:2px}
+  .stamp .sv.pend{color:var(--muted2);font-size:13px;font-weight:500}
+  .stamp .sd{font-size:10px;color:var(--muted2);font-variant-numeric:tabular-nums}
+  .stamp button{flex:none;padding:11px 15px;border-radius:11px;border:none;font-family:inherit;font-size:12px;font-weight:800;letter-spacing:.6px;cursor:pointer;background:linear-gradient(135deg,var(--cyan-d),var(--cyan));color:#ffffff;text-transform:uppercase}
+  .stamp button:active{transform:scale(.96)}
+  .stamp.done{border-color:rgba(30,125,79,.45)}
+  .stamp.done .sv{color:var(--green)}
+  .stamp.done button:not(.editar){background:var(--panel2);color:var(--muted);pointer-events:none}
+  .stamp .editar{pointer-events:auto !important}
+  .stamp.mini{padding:8px 11px;margin-bottom:7px}
+  .stamp.mini .sv{font-size:14px}
+  .stamp.mini button{padding:9px 12px;font-size:11px}
+  .condline{background:rgba(30,125,79,.06);border:1px solid rgba(30,125,79,.3);border-left:3px solid var(--green);border-radius:9px;padding:9px 11px;font-size:12.5px;color:#1d4d35;margin-bottom:7px;line-height:1.55}
+  .condh{font-size:10px;color:var(--muted2);margin-top:3px;word-break:break-all}
+  .condres{background:rgba(138,106,47,.07);border:1px solid rgba(138,106,47,.35);border-left:3px solid var(--gold);border-radius:9px;padding:9px 11px;font-size:13px;color:#5a4516;line-height:1.55}
+  .lock{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--muted2);margin-top:10px;line-height:1.4}
+  .lock svg{width:13px;height:13px;flex:none}
+  .flowbar{display:flex;gap:5px;margin-bottom:12px}
+  .flowbar .fs{flex:1;height:5px;border-radius:3px;background:var(--line2)}
+  .flowbar .fs.done{background:var(--green)}
+  .flowbar .fs.cur{background:var(--cyan)}
+  .statline{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+  .statline b{color:var(--ink)}
+  .notifbar{flex:none;display:flex;align-items:center;gap:9px;background:#fff8e6;border-bottom:1px solid #e7d4a3;padding:8px 14px;overflow:hidden}
+  .notifbar .nbico{flex:none;width:24px;height:24px;border-radius:7px;background:#a96b06;color:#fff;display:grid;place-items:center;font-size:13px}
+  .notifbar .nbtrack{flex:1;overflow:hidden;white-space:nowrap;position:relative;height:18px}
+  .notifbar .nbmove{position:absolute;white-space:nowrap;will-change:transform;font-size:12.5px;color:#6e5318;font-weight:600;line-height:18px}
+  .notifbar .nbmove span{margin-right:42px}
+  .notifbar .nbmove span b{color:#11293a}
+  .notifbar .nbcount{flex:none;background:#bb352c;color:#fff;border-radius:999px;font-size:11px;font-weight:800;min-width:20px;height:20px;display:grid;place-items:center;padding:0 6px}
+  .xnav{display:flex;gap:6px;padding:8px 12px;background:#dbe6ed;border-bottom:1px solid var(--line)}
+  .xnav a{flex:1;text-align:center;text-decoration:none;font-size:11.5px;font-weight:800;letter-spacing:.3px;padding:9px 6px;border-radius:9px;color:var(--muted);background:#fff;border:1px solid var(--line)}
+  .xnav a.act{background:linear-gradient(135deg,#0a5f6b,#0a7d8c);color:#fff;border-color:transparent}
+  .remolc{display:flex;flex-direction:column;gap:8px}
+  .remolc .rc{display:flex;align-items:center;gap:10px}
+  .remolc .rc .rcl{flex:0 0 64px;font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  .pickwrap{position:relative}
+  .pick-pop{position:absolute;top:calc(100% + 3px);left:0;right:0;z-index:50;background:#fff;border:1.5px solid var(--cyan-d,#0a7d8c);border-radius:10px;box-shadow:0 10px 28px rgba(8,30,45,.18);max-height:230px;overflow-y:auto;display:none}
+  .pick-pop.on{display:block}
+  .pick-opt{padding:11px 13px;font-size:14px;font-weight:600;color:var(--ink,#11293a);cursor:pointer;border-bottom:1px solid #eef3f6}
+  .pick-opt:last-child{border-bottom:none}
+  .pick-opt:hover,.pick-opt.kbd{background:#eaf6f8}
+  .pick-opt.add{color:#0a7d8c;font-weight:800;font-style:italic}
+  .pick-empty{padding:11px 13px;font-size:12.5px;color:#8aa0ad}
+  .pickwrap input{width:100%;padding-right:34px !important}
+  .pickwrap .caret{position:absolute;right:8px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--muted);font-size:11px}
+  .remolc .rc input{flex:1;background:#fff;border:1.5px solid var(--line);border-radius:9px;padding:11px;font-family:inherit;font-size:14px;text-transform:uppercase}
+  .stamp .sbtns{display:flex;flex-direction:column;gap:5px}
+  .stamp .editar{background:#e7eef2;color:#0a7d8c;border:1.5px solid #0a7d8c;border-radius:9px;padding:7px 10px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer}
+  .stamp .editar.clr{background:rgba(187,53,44,.08);color:var(--red);border-color:var(--red)}
+  .stamp .editar.clr2{background:rgba(187,53,44,.08);color:var(--red);border-color:var(--red)}
+  .stamp .sd.dif{color:#a96b06}
+  .stamp .difbadge{font-size:9px;color:#a96b06;font-weight:700;margin-top:2px}
+  .firmas{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  @media(max-width:520px){.firmas{grid-template-columns:1fr}}
+  .firmabox{border:1.5px solid var(--line);border-radius:11px;padding:10px;background:#fff}
+  .firmabox .fl{font-size:10px;font-weight:800;letter-spacing:.8px;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+  .firmabox canvas{width:100%;height:120px;background:#fbfdfe;border:1px dashed var(--line);border-radius:8px;touch-action:none;display:block}
+  .firmabox .fa{display:flex;gap:7px;margin-top:7px}
+  .firmabox .fa button{flex:1;padding:11px 8px;border-radius:9px;border:1.5px solid var(--line);background:var(--panel2);color:var(--muted);font-family:inherit;font-size:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
+  .firmabox .fa button.ok{background:rgba(30,125,79,.1);color:var(--green);border-color:var(--green)}
+  .firmabox .fa button.clr{background:rgba(187,53,44,.08);color:var(--red);border-color:var(--red)}
+  .firmabox .fa button:active{transform:scale(.97)}
+  .firmabox .canvwrap{position:relative}
+  .firmabox .aclar{width:100%;margin-top:8px;padding:9px 11px;border:1.5px solid var(--line);border-radius:8px;font-family:inherit;font-size:13px;background:#fff;color:var(--ink);outline:none;box-sizing:border-box}
+  .firmabox .aclar:focus{border-color:var(--cyan)}
+  .firmabox .canvhint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#b9c9d3;font-size:12px;font-weight:700;pointer-events:none;letter-spacing:.5px}
+  .firmabox.signed .canvhint,.firmabox.drawing .canvhint{display:none}
+  .firmabox.signed{border-color:var(--green)}
+  .firmabox .done{font-size:10px;color:var(--green);font-weight:700;margin-top:5px;display:none}
+  .firmabox.signed .done{display:block}
+  .hlive{display:flex;flex-direction:column;gap:1px;padding:5px 11px;background:#fff;border:1px solid var(--line);border-radius:10px}
+  .hlive .hl-row{display:flex;gap:8px;align-items:baseline}
+  .hlive .hl-f{font-size:11.5px;font-weight:700;color:var(--ink);text-transform:capitalize}
+  .hlive .hl-h{font-size:12.5px;font-weight:800;color:var(--cyan);font-variant-numeric:tabular-nums}
+  .hlive .hl-c{font-size:11px;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:4px;margin-top:1px}
+  .hlive .hl-loc{font-size:8.5px;color:var(--muted2);text-transform:uppercase;letter-spacing:.4px}
+  .toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%) translateY(16px);z-index:300;background:#ffffff;border:1px solid var(--cyan-d);border-radius:11px;padding:12px 18px;font-size:13px;box-shadow:0 12px 36px rgba(20,40,55,.20);opacity:0;pointer-events:none;transition:.28s;max-width:88%;text-align:center;line-height:1.45}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.err{border-color:var(--red)}
+  .back{display:inline-flex;align-items:center;gap:6px;background:none;border:none;color:var(--cyan);font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;padding:4px 0;margin-bottom:8px;letter-spacing:.4px}
+  .back svg{width:15px;height:15px}
+  .lrow{display:flex;gap:10px;padding:10px 2px;border-bottom:1px solid var(--line2);font-size:11px;line-height:1.5}
+  .lrow .lt{flex:none;width:78px;color:var(--cyan);font-variant-numeric:tabular-nums;font-weight:600}
+  .lrow .lx{flex:1;color:#3c5a6a}
+  .lrow .lh{font-size:9px;color:var(--muted2);word-break:break-all;margin-top:2px}
+  .kv{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line2);font-size:13.5px}
+  .kv:last-child{border-bottom:none}
+  .kv span:first-child{color:var(--muted);flex:none}
+  .kv span:last-child{font-weight:600;text-align:right}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+  .chip{display:flex;align-items:center;gap:7px;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:7px 10px;font-size:12px}
+  .chip button{background:none;border:none;color:var(--red);font-size:14px;cursor:pointer;padding:0 2px;line-height:1}
+  .addrow{display:flex;gap:8px}
+  .addrow input{flex:1}
+  .addrow .btn{width:auto;padding:0 18px}
+  .tags{display:flex;flex-wrap:wrap;gap:8px}
+  .tag{padding:10px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg2);color:#3c5a6a;font-size:13px;font-weight:600;cursor:pointer;transition:.12s}
+  .tag.on{border-color:var(--cyan);background:rgba(10,125,140,.1);color:var(--cyan)}
+  .tag.on.amb{border-color:var(--amber);background:rgba(169,107,6,.1);color:var(--amber)}
+  .seg{display:flex;background:var(--bg2);border:1.5px solid var(--line);border-radius:11px;overflow:hidden}
+  .seg button{flex:1;padding:12px;background:none;border:none;color:var(--muted);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
+  .seg button.on{background:rgba(10,125,140,.14);color:var(--cyan)}
+  .drow{background:var(--bg2);border:1.5px solid var(--line);border-radius:12px;padding:11px;margin-bottom:9px}
+  .drow .dtop{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .drow select{flex:1;background:var(--panel2);border:1px solid var(--line);color:var(--ink);padding:9px;border-radius:9px;font-family:inherit;font-size:13px}
+  .drow .del{background:none;border:none;color:var(--red);font-size:16px;cursor:pointer;padding:4px 8px}
+  .drow .dst{display:flex;gap:8px}
+  .drow .dst>div{flex:1;display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted)}
+  .drow .dst b{color:var(--ink);font-variant-numeric:tabular-nums}
+  .drow .dst button{padding:8px 11px;border-radius:8px;border:none;font-family:inherit;font-size:10.5px;font-weight:800;background:linear-gradient(135deg,var(--cyan-d),var(--cyan));color:#ffffff;cursor:pointer;text-transform:uppercase}
+  /* modal de hora */
+  .modal{position:fixed;inset:0;background:rgba(8,20,30,.6);display:none;align-items:flex-end;justify-content:center;z-index:9999;padding:0}
+  .modal.on{display:flex}
+  .modal .sheet{background:#fff;width:100%;max-width:520px;border-radius:18px 18px 0 0;padding:20px 18px 26px;box-shadow:0 -8px 30px rgba(0,0,0,.3);animation:slideup .2s ease}
+  @keyframes slideup{from{transform:translateY(40px);opacity:.6}to{transform:translateY(0);opacity:1}}
+  .modal .sheet h3{font-size:16px;font-weight:800;color:var(--ink);margin-bottom:6px}
+  @media(min-width:560px){.modal{align-items:center}.modal .sheet{border-radius:18px}}
+</style>
+</head>
+<body>
+<!-- ===== PANTALLA DE LOGIN ===== -->
+<div id="login-screen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;height:100dvh;background:var(--bg);padding:24px">
+  <div style="width:100%;max-width:380px">
+    <div style="text-align:center;margin-bottom:32px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="url(#lg)" stroke-width="1.7" stroke-linecap="round" style="width:56px;height:56px;display:block;margin:0 auto 12px">
+        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e7c987"/><stop offset="1" stop-color="#34d3df"/></linearGradient></defs>
+        <circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="2.3" fill="#34d3df" stroke="none"/>
+      </svg>
+      <div style="font-size:26px;font-weight:800;letter-spacing:.5px;color:var(--ink)">BITÁCORA</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:3px">COPRAPILBA · Sistema de Practicaje</div>
+    </div>
+    <div style="background:var(--panel);border-radius:14px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,.08)">
+      <div style="margin-bottom:16px">
+        <label style="display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Usuario</label>
+        <input id="login-user" type="text" autocomplete="username" autocapitalize="none" placeholder="usuario"
+          style="width:100%;padding:12px 14px;border:1.5px solid var(--line2);border-radius:8px;font-size:16px;background:var(--bg);color:var(--ink);outline:none">
+      </div>
+      <div style="margin-bottom:22px">
+        <label style="display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Contraseña</label>
+        <input id="login-pass" type="password" autocomplete="current-password" placeholder="••••••••"
+          style="width:100%;padding:12px 14px;border:1.5px solid var(--line2);border-radius:8px;font-size:16px;background:var(--bg);color:var(--ink);outline:none">
+      </div>
+      <button id="login-btn" style="width:100%;padding:14px;background:var(--cyan);color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:.3px">Entrar</button>
+      <div id="login-err" style="display:none;margin-top:14px;padding:10px 14px;background:#fdecea;border-radius:8px;font-size:13px;color:var(--red);text-align:center"></div>
+    </div>
+    <div style="text-align:center;margin-top:20px;font-size:11px;color:var(--muted2)">LTELC Business Intelligence · v0628.C1</div>
+  </div>
+</div>
+
+<div id="login-loading" style="display:none;align-items:center;justify-content:center;height:100vh;background:var(--bg);flex-direction:column;gap:12px">
+  <div style="font-size:32px">⚓</div>
+  <div style="font-size:14px;color:var(--muted)">Verificando sesión…</div>
+</div>
+
+<div class="app" id="main-app" style="display:none">
+  <header>
+    <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="url(#g)" stroke-width="1.7" stroke-linecap="round"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e7c987"/><stop offset="1" stop-color="#34d3df"/></linearGradient></defs><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="2.3" fill="#34d3df" stroke="none"/></svg></div>
+    <div class="ht"><h1>BITÁCORA</h1><p>Vale del práctico · despachos</p></div>
+    <div class="hsp"></div>
+    <div class="hlive"><div class="hl-row"><span class="hl-f" id="hl-fecha">—</span><span class="hl-h" id="hl-hora">—</span></div><div class="hl-c" id="hl-clima">🌡️ …</div><div class="hl-loc">Puerto Madero · Río de la Plata</div></div>
+    <div class="net on" id="net"><span class="d"></span><span id="net-t">En línea</span></div>
+    <button id="btn-cuenta" title="Mi cuenta" style="background:none;border:none;cursor:pointer;padding:6px;color:var(--muted);font-size:18px;display:none" onclick="abrirCuenta()">👤</button>
+  </header>
+  <div class="xnav">
+    <a href="./" class="act">📋 Vale</a>
+    <a href="guardia.html">🗼 Guardia</a>
+    <a href="estadisticas.html">📊 Estadísticas</a>
+  </div>
+  <div class="notifbar" id="notifbar">
+    <div class="nbico">🔔</div>
+    <div class="nbtrack"><div class="nbmove" id="nbmove"></div></div>
+    <div class="nbcount" id="nbcount">0</div>
+  </div>
+
+  <main>
+    <!-- DESPACHOS -->
+    <div class="pane on" id="p-desp">
+      <button class="btn pri" id="btn-new" style="margin-bottom:14px;font-size:16px;padding:16px">＋ Nuevo despacho</button>
+      <div class="sec">Despachos <span class="cnt" id="d-count">0</span></div>
+      <input id="buscar-desp" placeholder="🔎 Buscar por N°, buque o fecha (dd/mm)" style="width:100%;padding:12px;border:1.5px solid var(--line);border-radius:11px;font-family:inherit;font-size:14px;margin-bottom:10px;background:#fff">
+      <div class="dlist" id="dlist"></div>
+    </div>
+
+    <!-- NUEVO DESPACHO -->
+    <div class="pane" id="p-new">
+      <button class="back" data-go="p-desp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 19l-7-7 7-7"/></svg> Despachos</button>
+      <div class="sec" id="new-titulo">Carga nuevo servicio</div>
+      <div class="hint" style="margin-bottom:10px">Si la agencia nominó el buque pero todavía no se asigna el número, dejá el N° vacío: el despacho queda <b>nominado</b>. Le asignás el número correlativo cuando se confirma y se le da al práctico.</div>
+      <div class="fcard">
+        <div class="fld"><label>Nº de despacho <span style="font-weight:400;color:var(--muted2)">(opcional — vacío = nominado)</span></label><input type="text" id="n-nro" placeholder="s/n — a confirmar" style="color:var(--gold2);font-weight:700"></div>
+        <div class="fld"><label>Nombre del buque</label><input type="text" id="n-buque" list="buq-list" placeholder="Escribí para buscar en la base..." autocapitalize="characters"><datalist id="buq-list"></datalist>
+          <div class="hint">Si el buque está en la base, medidas, bandera y señal se completan solas.</div></div>
+        <div class="fld"><label>Agencia (buscar)</label><span class="pickwrap"><input id="n-agen" list="dl-n-agen" autocapitalize="characters" placeholder="Tocá para elegir o escribí…"><span class="caret">▾</span></span><datalist id="dl-n-agen"></datalist></div>
+        <div class="frow">
+          <div class="fld"><label>Bandera (buscar)</label><span class="pickwrap"><input id="n-band" list="dl-n-band" placeholder="Tocá para elegir…"><span class="caret">▾</span></span><datalist id="dl-n-band"></datalist></div>
+          <div class="fld"><label>Señal de radio</label><input type="text" id="n-senal" placeholder="LW3373" autocapitalize="characters"></div>
+        </div>
+        <div class="fld"><label>Medidas (m)</label>
+          <div class="frow3">
+            <input type="number" id="n-eslora" step="0.01" inputmode="decimal" placeholder="Eslora">
+            <input type="number" id="n-manga" step="0.01" inputmode="decimal" placeholder="Manga">
+            <input type="number" id="n-puntal" step="0.01" inputmode="decimal" placeholder="Puntal">
+          </div>
+        </div>
+        <div class="frow">
+          <div class="fld"><label>UF · automático</label><input type="text" id="n-uf" class="ro" readonly value="—"></div>
+          <div class="fld"><label>CF · automático</label><input type="text" id="n-cf" class="ro" readonly value="—"></div>
+        </div>
+        <div class="hint" style="margin:-6px 0 12px">UF = E × M × P ÷ 800 · CF = UF redondeada hacia arriba (mínimo 65), regla de la planilla de facturación.</div>
+        <div class="frow">
+          <div class="fld"><label>Calado Pr (m)</label><input type="number" id="n-cpr" step="0.01" inputmode="decimal" placeholder="0,00"></div>
+          <div class="fld"><label>Calado Pp (m)</label><input type="number" id="n-cpp" step="0.01" inputmode="decimal" placeholder="0,00"></div>
+        </div>
+        <div class="frow">
+          <div class="fld"><label>Fecha de pedido</label><input type="date" id="n-fecha"></div>
+          <div class="fld"><label>Hora de pedido</label><input type="time" id="n-hora"></div>
+        </div>
+        <div class="fld"><label>Desde</label><select id="n-desde"></select></div>
+        <div class="fld"><label>Hasta</label><select id="n-hasta"></select></div>
+        <div class="fld"><label>Servicio · automático</label><input type="text" id="n-serv" class="ro" readonly value="ENT-ZC"></div>
+        <div class="fld"><label>Bow</label>
+          <div class="seg" id="n-bow"><button data-v="ok" class="on">OK</button><button data-v="out">OUT</button></div></div>
+        <div class="frow">
+          <div class="fld"><label>Práctico 1 (buscar)</label><span class="pickwrap"><input id="n-prac" list="dl-n-prac" placeholder="Tocá para elegir o escribí…"><span class="caret">▾</span></span><datalist id="dl-n-prac"></datalist></div>
+          <div class="fld"><label>Práctico 2 (opc.)</label><span class="pickwrap"><input id="n-prac2" list="dl-n-prac" placeholder="Opcional"><span class="caret">▾</span></span></div>
+        </div>
+        <div class="hint" style="margin:-6px 0 0">Buques de gran porte llevan dos prácticos (un punto cada uno).</div>
+      </div>
+      <button class="btn pri" id="btn-save-new">Asignar despacho</button>
+    </div>
+
+    <!-- VALE -->
+    <div class="pane" id="p-vale">
+      <button class="back" data-go="p-desp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 19l-7-7 7-7"/></svg> Despachos</button>
+      <div class="sec">Vale práctico · <span id="v-nro" style="color:var(--gold2)"></span></div>
+      <div class="flowbar" id="v-flow"></div>
+      <div class="statline" id="v-stat"></div>
+
+      <div class="fcard" id="v-info"></div>
+      <div id="v-cond"></div>
+
+      <div class="sec">Correcciones del práctico</div>
+      <div class="fcard">
+        <div class="frow">
+          <div class="fld"><label>Calado Pr (m)</label><input type="number" id="v-cpr" step="0.01" inputmode="decimal"></div>
+          <div class="fld"><label>Calado Pp (m)</label><input type="number" id="v-cpp" step="0.01" inputmode="decimal"></div>
+        </div>
+        <div class="frow">
+          <div class="fld"><label>Bow</label><div class="seg" id="v-bow"><button data-v="ok">OK</button><button data-v="out">OUT</button></div></div>
+          <div class="fld"><label>C/Máquina</label><div class="seg" id="v-cmaq"><button data-v="si">SÍ</button><button data-v="no">NO</button></div></div>
+        </div>
+        <div class="fld"><label>Remolcadores (nombre de cada uno)</label>
+          <div class="remolc">
+            <div class="rc"><span class="rcl">Proa</span><input id="v-rem-proa" list="dl-remolc" placeholder="nombre remolcador"></div>
+            <div class="rc"><span class="rcl">Popa</span><input id="v-rem-popa" list="dl-remolc" placeholder="nombre remolcador"></div>
+            <div class="rc"><span class="rcl">Tercero</span><input id="v-rem-3ro" list="dl-remolc" placeholder="si corresponde"></div>
+          </div>
+          <div id="v-bp-total" style="font-size:12px;font-weight:800;color:var(--cyan);margin-top:7px"></div>
+          <datalist id="dl-remolc"></datalist>
+        </div>
+      </div>
+
+      <div class="sec">Horas de la maniobra</div>
+      <div class="fcard">
+        <div class="kv"><span>Fecha / hora de pedido</span><span id="v-pedido" style="color:var(--gold2)">—</span></div>
+        <div style="height:9px"></div>
+        <div id="v-stamps"></div>
+        <div class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        Tocá <b>Marcar ahora</b> para sellar la hora del momento, o <b>Cargar/Corregir</b> para indicar la hora real si la asentás más tarde. Toda marca y corrección queda en el registro de integridad con su sello (validez documental ante demoras).</div>
+      </div>
+
+      <div class="sec">Hoja de ruta <span id="v-ruta-sent" style="font-size:10px;color:var(--cyan)"></span></div>
+      <div class="fcard">
+        <div id="v-ruta-pick" style="display:none;margin-bottom:11px">
+          <div class="hint" style="margin-bottom:7px">Movimiento entre sitios: elegí el sentido de la hoja de ruta.</div>
+          <div class="seg" id="v-ruta-seg"><button data-v="ent">Sentido entrada</button><button data-v="sal">Sentido salida</button><button data-v="">Sin hoja de canal</button></div>
+        </div>
+        <div class="hint" style="margin-bottom:10px">Marcá la hora al pasar por cada posición, en el orden del recorrido.</div>
+        <div id="v-ruta"></div>
+      </div>
+
+      <div class="sec">Demoras</div>
+      <div class="fcard">
+        <div id="v-demoras"></div>
+        <button class="btn ghost sm" id="btn-add-dem">＋ Registrar demora</button>
+      </div>
+
+      <div class="sec">Lancha y remís</div>
+      <div class="fcard">
+        <div class="frow">
+          <div class="fld"><label>Nombre lancha (buscar)</label><span class="pickwrap"><input id="v-lancha" list="dl-v-lancha" placeholder="Tocá para elegir o escribí…"><span class="caret">▾</span></span><datalist id="dl-v-lancha"></datalist></div>
+          <div class="fld"><label>Empresa remís (buscar)</label><span class="pickwrap"><input id="v-rem" list="dl-v-rem" placeholder="Tocá para elegir o escribí…"><span class="caret">▾</span></span><datalist id="dl-v-rem"></datalist></div>
+        </div>
+        <div class="fld"><label>Tramos del remís</label><div class="tags" id="v-tramos"></div></div>
+      </div>
+
+      <div class="sec">Observaciones</div>
+      <div class="fcard">
+        <div class="fld"><label>Tipo (parametrizado)</label><div class="tags" id="v-obschips"></div></div>
+        <div class="fld"><label>Detalle</label><textarea id="v-obstxt" placeholder="Dejar vacío si la maniobra fue normal"></textarea>
+        <div class="hint">Sin observaciones: cierra el práctico. Con observaciones: cierra el asesor de turno.</div></div>
+      </div>
+
+      <div class="sec">Firmas</div>
+      <div class="fcard">
+        <div class="hint" style="margin-bottom:10px">Firmá con el dedo en cada recuadro y tocá <b>Confirmar</b>. Si te equivocás, tocá <b>🗑 Borrar y rehacer</b>. La firma queda en el comprobante PDF.</div>
+        <div class="firmas">
+          <div class="firmabox" id="fb-prac">
+            <div class="fl">Práctico</div>
+            <div class="canvwrap"><canvas id="sig-prac" width="500" height="240"></canvas><div class="canvhint">✍ Firmá acá con el dedo</div></div>
+            <div class="fa"><button data-clear="prac" class="clr">🗑 Borrar y rehacer</button><button data-save="prac" class="ok">✓ Confirmar</button></div>
+            <input id="acl-prac" class="aclar" placeholder="Aclaración (nombre del práctico)" autocomplete="off">
+            <div class="done">✔ Firmada</div>
+          </div>
+          <div class="firmabox" id="fb-cap">
+            <div class="fl">Capitán</div>
+            <div class="canvwrap"><canvas id="sig-cap" width="500" height="240"></canvas><div class="canvhint">✍ Firmá acá con el dedo</div></div>
+            <div class="fa"><button data-clear="cap" class="clr">🗑 Borrar y rehacer</button><button data-save="cap" class="ok">✓ Confirmar</button></div>
+            <input id="acl-cap" class="aclar" placeholder="Aclaración (nombre del capitán)" autocomplete="off">
+            <div class="done">✔ Firmada</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn gold" id="btn-close">Cerrar vale</button>
+      <div style="height:9px"></div>
+      <button class="btn ghost" id="btn-pdf-vale">🖨 Generar comprobante (PDF)</button>
+      <div style="height:9px"></div>
+      <button class="btn warn" id="btn-close-asesor" style="display:none">Cerrar como asesor de turno</button>
+      <div style="height:9px"></div>
+      <button class="btn ghost sm" id="btn-draft">Guardar borrador</button>
+    </div>
+
+    <!-- EXPORTAR -->
+    <div class="pane" id="p-exp">
+      <div class="sec">Sincronización y export</div>
+      <div class="fcard">
+        <div class="kv"><span>Vales en el dispositivo</span><span id="x-tot">0</span></div>
+        <div class="kv"><span>Cerrados</span><span id="x-cer" style="color:var(--green)">0</span></div>
+        <div class="kv"><span>Pendientes de asesor</span><span id="x-pa" style="color:var(--amber)">0</span></div>
+        <div class="kv"><span>En curso / asignados</span><span id="x-bor">0</span></div>
+      </div>
+      <div class="hint" style="margin-bottom:12px">Los archivos se generan en el dispositivo sin internet. Cada reporte sale por separado según quién puede verlo — nada económico viaja en los reportes operativos.</div>
+      <div class="hint" style="margin-bottom:6px;color:var(--cyan);font-weight:800">REPORTE INTERNO · alimenta el Excel maestro de la asociación</div>
+      <button class="btn pri" id="x-maestro">⬇ Excel maestro (todos los campos)</button>
+      <div style="height:13px"></div>
+      <div class="hint" style="margin-bottom:6px;color:var(--cyan);font-weight:800">INTERNO COOPERATIVA · sistema de puntos — no compartir</div>
+      <button class="btn ghost" id="x-prac">🔒 Trabajos por práctico (puntos)</button>
+      <div style="height:13px"></div>
+      <div class="hint" style="margin-bottom:6px;color:var(--amber);font-weight:800">SOLO GERENCIA ADMINISTRATIVA · confidencial — alimenta FACT_NC, no compartir con competidores</div>
+      <button class="btn warn" id="x-fact">🔒 Facturación (formato FACT_NC)</button>
+    </div>
+
+    <!-- PARAMETROS -->
+    <div class="pane" id="p-conf">
+      <div class="sec">Pronóstico mareológico</div>
+      <div class="fcard">
+        <div class="hint" style="margin-bottom:9px">Carga del operador, 3 veces por día. La hora se asienta sola.</div>
+        <div class="addrow"><input type="number" step="0.01" inputmode="decimal" id="marea-alt" placeholder="Altura (m)"><button class="btn pri sm" id="marea-add">Registrar</button></div>
+        <div id="marea-list" style="margin-top:10px"></div>
+      </div>
+      <div class="sec">Parametrización</div>
+      <div class="hint" style="margin-bottom:12px">Estas listas alimentan los desplegables. En producción se actualizan desde la planilla central.</div>
+      <div class="fcard"><div class="fld"><label>Agencias</label><div class="chips" id="ch-agen"></div>
+        <div class="addrow"><input type="text" id="add-agen" placeholder="Agregar agencia"><button class="btn pri sm" data-add="agen">＋</button></div></div></div>
+      <div class="fcard"><div class="fld"><label>Prácticos</label><div class="chips" id="ch-pra"></div>
+        <div class="addrow"><input type="text" id="add-pra" placeholder="Agregar práctico"><button class="btn pri sm" data-add="pra">＋</button></div></div></div>
+      <div class="fcard"><div class="fld"><label>Lanchas</label><div class="chips" id="ch-lan"></div>
+        <div class="addrow"><input type="text" id="add-lan" placeholder="Agregar lancha"><button class="btn pri sm" data-add="lan">＋</button></div></div></div>
+      <div class="fcard"><div class="fld"><label>Empresas remís</label><div class="chips" id="ch-rem"></div>
+        <div class="addrow"><input type="text" id="add-rem" placeholder="Agregar empresa"><button class="btn pri sm" data-add="rem">＋</button></div></div></div>
+      <div class="fcard"><div class="fld"><label>Remolcadores</label><div class="chips" id="ch-remolc"></div>
+        <div class="addrow"><input type="text" id="add-remolc" placeholder="Agregar remolcador"><button class="btn pri sm" data-add="remolc">＋</button></div></div></div>
+      <div class="fcard"><div class="fld"><label>Destinos · Pto. Norte</label><div class="chips" id="ch-dnorte"></div>
+        <div class="addrow"><input type="text" id="add-dnorte" placeholder="Agregar destino Norte"><button class="btn pri sm" data-add="dnorte">＋</button></div></div></div>
+      <div class="fcard"><div class="fld"><label>Destinos · Pto. Sur</label><div class="chips" id="ch-dsur"></div>
+        <div class="addrow"><input type="text" id="add-dsur" placeholder="Agregar destino Sur"><button class="btn pri sm" data-add="dsur">＋</button></div></div></div>
+      <div class="fcard"><div class="fld"><label>Tipos de observación</label><div class="chips" id="ch-obs"></div>
+        <div class="addrow"><input type="text" id="add-obs" placeholder="Agregar tipo"><button class="btn pri sm" data-add="obs">＋</button></div></div></div>
+      <div class="sec">Acceso a reportes confidenciales</div>
+      <div class="fcard">
+        <div class="hint" style="margin-bottom:9px">Usuario y contraseña para exportar facturación y puntaje. (Traba operativa; en producción se gestiona con usuarios reales en el servidor.)</div>
+        <div class="frow">
+          <div class="fld"><label>Usuario</label><input type="text" id="acc-user"></div>
+          <div class="fld"><label>Contraseña</label><input type="password" id="acc-pin"></div>
+        </div>
+        <button class="btn ghost sm" id="acc-save">Guardar credenciales</button>
+      </div>
+      <div class="sec">Registro de integridad</div>
+      <div class="fcard" id="logbox" style="max-height:280px;overflow-y:auto"></div>
+    </div>
+  </main>
+
+  <nav>
+    <button class="on" data-p="p-desp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h18M3 12h18M3 17h12"/></svg>Despachos</button>
+    <button data-p="p-exp"><span class="bdg" id="bdg-exp" style="display:none">0</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Exportar</button>
+    <button data-p="p-conf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Parámetros</button>
+  </nav>
+</div>
+<div class="toast" id="toast"></div>
+
+<!-- MODAL HORA -->
+<div class="modal" id="m-hora">
+  <div class="sheet">
+    <h3>Cargar hora — <span id="h-titulo"></span></h3>
+    <div class="hint" style="margin-bottom:11px">Indicá la hora real en que ocurrió el hecho. Queda registrada junto con el momento en que la asentás.</div>
+    <div class="frow">
+      <div class="fld"><label>Fecha</label><input type="date" id="h-fecha"></div>
+      <div class="fld"><label>Hora real (hh:mm)</label><input type="time" id="h-hora"></div>
+    </div>
+    <div class="frow">
+      <button class="btn ghost" onclick="cerrarModalHora()">Cancelar</button>
+      <button class="btn gold" id="h-save">Guardar hora</button>
+    </div>
+  </div>
+
+<!-- ===== MODAL CAMBIAR CONTRASEÑA ===== -->
+<div id="modal-cuenta" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;padding:24px">
+  <div style="background:#fff;border-radius:14px;padding:28px;width:100%;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.2)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <div>
+        <div style="font-size:16px;font-weight:700;color:var(--ink)" id="cuenta-nombre">—</div>
+        <div style="font-size:12px;color:var(--muted)" id="cuenta-rol">—</div>
+      </div>
+      <button onclick="cerrarCuenta()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted)">✕</button>
+    </div>
+    <div style="border-top:1px solid var(--line2);padding-top:18px">
+      <div style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px">Cambiar contraseña</div>
+      <div style="margin-bottom:12px">
+        <label style="display:block;font-size:12px;color:var(--muted);margin-bottom:5px">Contraseña actual</label>
+        <input id="pw-actual" type="password" style="width:100%;padding:10px 12px;border:1.5px solid var(--line2);border-radius:8px;font-size:15px;color:var(--ink);background:var(--bg);outline:none">
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="display:block;font-size:12px;color:var(--muted);margin-bottom:5px">Contraseña nueva</label>
+        <input id="pw-nueva" type="password" style="width:100%;padding:10px 12px;border:1.5px solid var(--line2);border-radius:8px;font-size:15px;color:var(--ink);background:var(--bg);outline:none">
+      </div>
+      <div style="margin-bottom:18px">
+        <label style="display:block;font-size:12px;color:var(--muted);margin-bottom:5px">Confirmar contraseña nueva</label>
+        <input id="pw-confirmar" type="password" style="width:100%;padding:10px 12px;border:1.5px solid var(--line2);border-radius:8px;font-size:15px;color:var(--ink);background:var(--bg);outline:none">
+      </div>
+      <div id="pw-err" style="display:none;margin-bottom:12px;padding:8px 12px;background:#fdecea;border-radius:8px;font-size:13px;color:#bb352c"></div>
+      <div id="pw-ok" style="display:none;margin-bottom:12px;padding:8px 12px;background:#e8f5e9;border-radius:8px;font-size:13px;color:#1e7d4f">Contraseña actualizada correctamente.</div>
+      <button id="pw-btn" onclick="cambiarPassword()" style="width:100%;padding:12px;background:var(--cyan);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer">Actualizar contraseña</button>
+    </div>
+    <div style="border-top:1px solid var(--line2);margin-top:18px;padding-top:14px">
+      <button onclick="cerrarSesion()" style="width:100%;padding:10px;background:none;border:1.5px solid var(--line2);border-radius:8px;font-size:14px;color:var(--muted);cursor:pointer">Cerrar sesión</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+window.BITACORA_VERSION="v0628.C1";console.log("BITÁCORA vale v0628.C1 (sync)");
+
+/* =====================================================================
+   CAPA DE INTEGRACIÓN C1 — Sincronización con backend BITÁCORA
+   Offline-first: si el servidor no responde, sigue con localStorage.
+   API_BASE apunta al servidor Hostinger.
+===================================================================== */
+const API_BASE = 'https://floralwhite-peafowl-843054.hostingersite.com';
+let API_TOKEN = null;   // JWT recibido en login
+let API_USER  = null;   // { usuario, nombre, rol }
+
+const api = {
+  // Login contra el servidor real
+  async login(usuario, password) {
+    try {
+      const r = await fetch(API_BASE + '/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ usuario, password })
+      });
+      const j = await r.json();
+      if (j.ok) {
+        API_TOKEN = j.token;
+        API_USER  = j.user;
+        try { localStorage.setItem('BIT_TOKEN', j.token); localStorage.setItem('BIT_USER', JSON.stringify(j.user)); } catch(e) {}
+        return { ok: true, user: j.user };
+      }
+      return { ok: false, error: j.error || 'Error de autenticación' };
+    } catch(e) {
+      return { ok: false, error: 'Servidor no disponible' };
+    }
+  },
+
+  // Verificar sesión guardada
+  async checkSession() {
+    try {
+      const t = localStorage.getItem('BIT_TOKEN');
+      if (!t) return false;
+      const r = await fetch(API_BASE + '/api/me', {
+        credentials: 'include',
+        headers: { 'Authorization': 'Bearer ' + t }
+      });
+      if (!r.ok) return false;
+      const j = await r.json();
+      API_TOKEN = t;
+      API_USER  = j.user;
+      return true;
+    } catch(e) { return false; }
+  },
+
+  // Logout
+  async logout() {
+    try { await fetch(API_BASE + '/api/logout', { method: 'POST', credentials: 'include' }); } catch(e) {}
+    API_TOKEN = null; API_USER = null;
+    try { localStorage.removeItem('BIT_TOKEN'); localStorage.removeItem('BIT_USER'); } catch(e) {}
+  },
+
+  // Headers con auth
+  _h() {
+    const h = { 'Content-Type': 'application/json' };
+    if (API_TOKEN) h['Authorization'] = 'Bearer ' + API_TOKEN;
+    return h;
+  },
+
+  // Pull: traer todos los despachos del servidor y mergear con localStorage
+  async pullDespachos() {
+    try {
+      const r = await fetch(API_BASE + '/api/despachos', { credentials: 'include', headers: this._h() });
+      if (!r.ok) return false;
+      const rows = await r.json();
+      if (!Array.isArray(rows) || rows.length === 0) return true;
+      // Mergear: el servidor es fuente de verdad para los despachos que tienen nro
+      const db = dbRaw() || { seq: 639, desp: {} };
+      rows.forEach(srv => {
+        const data = typeof srv.data === 'string' ? JSON.parse(srv.data || '{}') : (srv.data || {});
+        // Buscar si ya existe localmente por nro
+        const localKey = Object.keys(db.desp || {}).find(k => db.desp[k] && String(db.desp[k].nro) === String(srv.nro));
+        const id = localKey || ('srv' + srv.nro);
+        db.desp[id] = Object.assign(db.desp[id] || {}, {
+          id, nro: String(srv.nro), nroFinal: String(srv.nro),
+          estado: srv.estado, buque: srv.buque, agen: srv.agencia,
+          band: srv.bandera, senal: srv.senal, eslora: srv.eslora,
+          manga: srv.manga, puntal: srv.puntal, uf: srv.uf, cf: srv.cf,
+          cpr: srv.cpr, cpp: srv.cpp, serv: srv.servicio,
+          desde: srv.desde_, hasta: srv.hasta_, bow: srv.bow,
+          prac: srv.prac, prac2: srv.prac2, fecha: srv.fecha,
+          hora: srv.hora, cmaq: srv.cmaq,
+          creado: srv.creado, cerradoPor: srv.cerrado_por,
+          cerradoEn: srv.cerrado_en, anulado_motivo: srv.anulado_motivo,
+          ...data
+        });
+      });
+      dbPut(db);
+      return true;
+    } catch(e) { console.warn('pull fallido:', e); return false; }
+  },
+
+  // Push: enviar un despacho al servidor
+  async pushDespacho(d) {
+    try {
+      const payload = {
+        buque: d.buque, agen: d.agen, band: d.band, senal: d.senal,
+        eslora: d.eslora, manga: d.manga, puntal: d.puntal,
+        uf: d.uf, cf: d.cf, cpr: d.cpr, cpp: d.cpp,
+        serv: d.serv || d.servicio, desde: d.desde, hasta: d.hasta,
+        bow: d.bow, prac: d.prac, prac2: d.prac2,
+        fecha: d.fecha, hora: d.hora, cmaq: d.cmaq,
+        estado: d.estado,
+        data: {
+          stamps: d.stamps, ruta: d.ruta, demoras: d.demoras,
+          obsChips: d.obsChips, remol: d.remol, tramos: d.tramos,
+          cortes: d.cortes, obsTxt: d.obsTxt, resumen: d.resumen,
+          logi: d.logi, cal: d.cal, med: d.med, horaTxt: d.horaTxt,
+          es: d.es, pcos: d.pcos, cerradoPor: d.cerradoPor,
+          lancha: d.lancha, rem: d.rem, rutaSentido: d.rutaSentido,
+          firmas: d.firmas, firmasSello: d.firmasSello,
+          stampsMeta: d.stampsMeta, remolNom: d.remolNom, rutaMeta: d.rutaMeta
+        }
+      };
+      if (d.nro && !isNaN(parseInt(d.nro))) {
+        // Despacho con número: PUT para actualizar
+        const r = await fetch(API_BASE + '/api/despachos/' + d.nro, {
+          method: 'PUT', credentials: 'include',
+          headers: this._h(), body: JSON.stringify(payload)
+        });
+        return r.ok;
+      }
+      return true; // nominados sin número no se pushean todavía
+    } catch(e) { console.warn('push fallido:', e); return false; }
+  },
+
+  // Obtener parámetros del servidor
+  async pullParams() {
+    try {
+      const r = await fetch(API_BASE + '/api/parametros', { credentials: 'include', headers: this._h() });
+      if (!r.ok) return false;
+      const j = await r.json();
+      // Mergear con PARAMS local (servidor tiene prioridad en listas base)
+      if (j.agen) PARAMS.agen = j.agen;
+      if (j.pra)  PARAMS.pra  = j.pra;
+      if (j.lan)  PARAMS.lan  = j.lan;
+      if (j.rem)  PARAMS.rem  = j.rem;
+      if (j.band) PARAMS.band = j.band;
+      if (j.obs)  PARAMS.obs  = j.obs;
+      if (j.dnorte) PARAMS.dnorte = j.dnorte;
+      if (j.dsur)   PARAMS.dsur   = j.dsur;
+      if (j.buques) Object.assign(BUQ, j.buques);
+      store.set('bit3_params', PARAMS);
+      return true;
+    } catch(e) { return false; }
+  },
+
+  get isOnline() { return !!API_TOKEN; },
+  get usuario() { return API_USER ? API_USER.usuario : (getCreds ? getCreds().user : 'local'); },
+  get rol() { return API_USER ? API_USER.rol : 'operador'; }
+};
+
+/* =====================================================================
+   BITÁCORA Móvil — Vale del práctico offline-first (v2, según relevamiento)
+   Un solo archivo. Sin dependencias. Datos en el dispositivo. © LTELC BI
+   ===================================================================== */
+const MEM={};
+const store={
+  get(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return MEM[k]!==undefined?MEM[k]:d; } },
+  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} MEM[k]=v; }
+};
+
+/* ===== CAPA DE INTEGRACIÓN BITÁCORA · base central compartida =====
+   El Nº de despacho lo asigna el correlativo CENTRAL al recibir el llamado.
+   Una vez asignado queda cerrado: es el ID de toda la trazabilidad.
+   Modo demo: base compartida del dominio + canal en vivo entre pantallas.
+   Producción: estos mismos métodos apuntan a la API central de LTELC. */
+const DB_KEY='BITACORA_DB_V1';
+let MEMDB=null,BC=null;try{BC=new BroadcastChannel('bitacora');}catch(e){}
+const SEED_DESP={
+'636':{nro:'636',es:'E',serv:'ENT-ZC',buque:'MSC ADELE',med:'335 x 45.60',eslora:'335',manga:'45.60',puntal:'',agen:'MSC',band:'PANAMÁ',fecha:'2026-06-09',hora:'21:30',horaTxt:'ETA ZC 09/ 2130 Hs',cal:'9.7 / 9.80',cpr:'9.7',cpp:'9.8',desde:'ZONA COMÚN',hasta:'EXOLGAN II',bow:'ok',cf:'',uf:'',prac:'CASTRO',prac2:'LUZZI G',pcos:['CASTRO','LUZZI G'],logi:'VICTOR: 3 hs antes ambos · ALLUEN: OK 2030 · ANTARES: LUCIO QUERANDI BERNARDO',estado:'encurso'},
+'637':{nro:'637',es:'S',serv:'SAL-ZC',buque:'TIGER PLATA',med:'169.99 x 28.10',eslora:'169.99',manga:'28.10',puntal:'14.20',agen:'AMI',band:'SINGAPUR',fecha:'2026-06-10',hora:'02:00',horaTxt:'ETD 10/ 0200 Hs',desde:'DNA C 5TA',hasta:'ZONA COMÚN',cf:'85',uf:'84.7868',prac:'BERMUDEZ',pcos:['BERMUDEZ'],logi:'SAR: 0130 / MORA',estado:'cerrado',cerradoPor:'BERMUDEZ (práctico)',resumen:'Maniobra sin novedades. Marea creciente, viento SE moderado, visibilidad buena. Sin demoras.'},
+'638':{nro:'638',es:'S',serv:'SAL-ZC',buque:'CABO PILAR',med:'228 x 32.20',eslora:'228',manga:'32.20',puntal:'19.80',agen:'RAIZEN',band:'ARGENTINA',senal:'LW3373',fecha:'2026-06-10',hora:'06:30',horaTxt:'ETD 10/ 0630',desde:'DDI A’',hasta:'ZONA COMÚN',cf:'182',uf:'181.7046',prac:'IGLESIAS',pcos:['IGLESIAS'],logi:'PEDRO: 0600 · ONA TRIUNFO · ETA 0730 KM 11',estado:'pendasesor',obsTxt:'Demora en zarpada a la espera de remolcador.'},
+'639':{nro:'639',es:'S',serv:'SAL-ZC',buque:'JULIO A',med:'120 x 20.40',eslora:'120',manga:'20.40',puntal:'11.90',agen:'RAIZEN',band:'ARGENTINA',fecha:'2026-06-10',hora:'21:00',horaTxt:'POB 10/ 2100 HS',desde:'DDI B',hasta:'ZONA COMÚN',cf:'65',uf:'36.4140',prac:'MILANI',pcos:['MILANI'],logi:'GASTON: 2000 · SR',estado:'asignado'}
+};
+function dbRaw(){try{const v=localStorage.getItem(DB_KEY);return v?JSON.parse(v):MEMDB;}catch(e){return MEMDB;}}
+function dbPut(db){MEMDB=db;try{localStorage.setItem(DB_KEY,JSON.stringify(db));}catch(e){}try{BC&&BC.postMessage('upd');}catch(e){}}
+function dbInit(){let db=dbRaw();if(!db){db={seq:639,desp:{}};
+  Object.values(JSON.parse(JSON.stringify(SEED_DESP))).forEach((d,i)=>{const id='seed'+(d.nro||i);d.id=id;db.desp[id]=d;});
+  dbPut(db);}
+  let cambio=false;
+  Object.keys(db.desp).forEach(k=>{const d=db.desp[k];if(d&&!d.id){d.id='d'+(d.nro||Math.random().toString(36).slice(2,8));db.desp[d.id]=d;if(k!==d.id){delete db.desp[k];}cambio=true;}});
+  if(cambio)dbPut(db);
+  return db;}
+function nuevoId(){return 'd'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function asignarNro(){const db=dbInit();db.seq++;dbPut(db);return String(db.seq);}
+function asignarNroSugerido(){const db=dbInit();let max=db.seq||639;
+  Object.values(db.desp).forEach(d=>{if(d&&d.nro&&!isNaN(parseInt(d.nro))){max=Math.max(max,parseInt(d.nro));}});
+  return String(max+1);}
+function dbWriteOne(d){const db=dbInit();if(!d.id)d.id=nuevoId();db.desp[d.id]=Object.assign(db.desp[d.id]||{},d);dbPut(db);}
+function dbWriteDesp(arr){const db=dbInit();arr.forEach(d=>{if(d){if(!d.id)d.id=nuevoId();db.desp[d.id]=Object.assign(db.desp[d.id]||{},d);}});dbPut(db);}
+function dbDeleteDesp(id){const db=dbInit();delete db.desp[id];dbPut(db);}
+
+/* ===== Control de acceso operativo (traba para acciones sensibles) =====
+   Demo: validación local con PIN configurable. En producción, esta validación
+   ocurre en el servidor de LTELC con usuarios/contraseñas reales y registro de accesos. */
+function getCreds(){ // {user, pin} configurables; por defecto admin/2604
+  try{const v=localStorage.getItem('BITACORA_ACCESO');if(v)return JSON.parse(v);}catch(e){}
+  return {user:'admin',pin:'2604'};
+}
+function setCreds(u,p){try{localStorage.setItem('BITACORA_ACCESO',JSON.stringify({user:u,pin:p}));}catch(e){}}
+let _gateOK=false,_gateUntil=0;
+function gateAcceso(accion){
+  // sesión corta: si ya validó hace <10 min, no vuelve a pedir
+  if(_gateOK && Date.now()<_gateUntil) return true;
+  // Si hay sesión activa del servidor con rol autorizado, acceso directo
+  if(api.isOnline && ['admin','gerencia','asesor'].includes(api.rol)){
+    _gateOK=true; _gateUntil=Date.now()+600000; return true;
+  }
+  const c=getCreds();
+  const u=prompt('Acceso restringido — '+accion+'\nUsuario:'); if(u===null)return false;
+  const p=prompt('Contraseña:'); if(p===null)return false;
+  if(u.trim()===c.user && p===c.pin){ _gateOK=true;_gateUntil=Date.now()+600000; return true; }
+  alert('Usuario o contraseña incorrectos. Acción cancelada.'); return false;
+}
+
+
+/* ===== Reloj + clima en vivo de Puerto Madero (Open-Meteo, sin clave) ===== */
+function _wIcon(code,day){if(code===0)return day?'☀️':'🌙';if(code<=2)return day?'🌤️':'☁️';if(code===3)return '☁️';if(code>=45&&code<=48)return '🌫️';if(code>=51&&code<=67)return '🌧️';if(code>=71&&code<=77)return '🌨️';if(code>=80&&code<=82)return '🌦️';if(code>=95)return '⛈️';return '🌡️';}
+function _wTxt(code){const m={0:'Despejado',1:'Mayorm. despejado',2:'Parc. nublado',3:'Nublado',45:'Niebla',48:'Niebla',51:'Llovizna',53:'Llovizna',55:'Llovizna',61:'Lluvia',63:'Lluvia',65:'Lluvia fuerte',80:'Chaparrones',81:'Chaparrones',82:'Chaparrones',95:'Tormenta',96:'Tormenta'};return m[code]||'—';}
+function startHeaderLive(){
+  function tick(){
+    const d=new Date();
+    const dias=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    const mes=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    const f=dias[d.getDay()]+' '+d.getDate()+' '+mes[d.getMonth()];
+    const h=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0');
+    const ef=document.getElementById('hl-fecha'),eh=document.getElementById('hl-hora');
+    if(ef)ef.textContent=f; if(eh)eh.textContent=h;
+  }
+  tick(); setInterval(tick,1000);
+  function clima(){
+    fetch('https://api.open-meteo.com/v1/forecast?latitude=-34.61&longitude=-58.36&current=temperature_2m,weather_code,wind_speed_10m,is_day&timezone=America%2FArgentina%2FBuenos_Aires')
+      .then(r=>r.json()).then(j=>{const c=j.current;if(!c)return;const el=document.getElementById('hl-clima');
+        if(el)el.innerHTML='<span style="font-size:15px">'+_wIcon(c.weather_code,c.is_day)+'</span> '+Math.round(c.temperature_2m)+'°C · '+_wTxt(c.weather_code)+' · '+Math.round(c.wind_speed_10m)+' km/h';
+      }).catch(e=>{const el=document.getElementById('hl-clima');if(el)el.innerHTML='🌡️ clima offline';});
+  }
+  clima(); setInterval(clima,600000);
+}
+
+function pushNotif(msg,kind){
+  try{const db=dbInit();db.notifs=db.notifs||[];
+    db.notifs.push({t:new Date().toISOString(),msg,kind:kind||'info'});
+    if(db.notifs.length>120)db.notifs=db.notifs.slice(-120);dbPut(db);}catch(e){}
+}
+function dbNotifs(){const db=dbInit();return db.notifs||[];}
+function dbLoadDesp(){
+  const db=dbInit();
+  return Object.values(db.desp).filter(d=>d&&(d.buque||d.nro)).map(x=>{
+    const d=Object.assign({prac:'',prac2:'',stamps:{},ruta:{},demoras:[],obsChips:[],remol:[],tramos:[],cortes:[],obsTxt:'',resumen:'',logi:'',cal:'',med:'',horaTxt:'',es:'',serv:'',cf:'',uf:'',cpr:'',cpp:'',bow:'',band:'',senal:'',eslora:'',manga:'',puntal:'',agen:'',fecha:'',hora:'',pcos:null,cerradoPor:'',cerradoEn:'',lancha:'',rem:'',cmaq:'si',rutaSentido:'',firmas:{},firmasSello:{},stampsMeta:{},remolNom:{},rutaMeta:{}},x);
+    d.id=d.id||nuevoId();d.nroFinal=d.nroFinal||d.nro||'';
+    if(!d.pcos||!d.pcos.length)d.pcos=[d.prac].concat(d.prac2?[d.prac2]:[]).filter(Boolean);
+    return d;
+  }).sort((a,b)=>{const na=a.nro?parseInt(a.nro):999999,nb=b.nro?parseInt(b.nro):999999;if(na!==nb)return na-nb;return (a.creado||'').localeCompare(b.creado||'');});
+}
+let PARAMS=store.get('bit3_params',{
+  agen:['RAIZEN','PISA','MSC','MAERSK','ONE','AMI','ISA','MARUBA','OCEANWAY','CROCE','H. LLOYD','HEINLEIN','BYM','GET','SIPSA'],
+  pra:['DIAZ','PEÑA','GORGOSCHIDSE','TUBIO','GIACHINO','IGLESIAS','MILANI','SAGRISTA','CASTRO','BERMUDEZ','NILSON'],
+  praOtros:['LUZZI','DI COLA','DELISANTI','BERTOCHI','RODRIGUEZ'],
+  lan:['ANTARES','COMETA','KOON','ZEYA LP','PAX'],
+  rem:['SARMIENTO','VICTOR','PEDRO','GASTÓN','MARTÍN','MORA'],
+  band:['ARGENTINA','PANAMÁ','LIBERIA','PORTUGAL','SINGAPUR','IS. MARSHALL','BAHAMAS','MALTA','HONG KONG'],
+  obs:['Sin Máq.','Demoras','Giro en el canal','Continuación viaje','Otros'],
+  dnorte:['Dna A Norte','Dna A Sur','Dna B Norte 5ta.','Dna B Norte 7ma.','Dna B Sur 1ra.','Dna B Sur 3ra.','Dna C Norte 1ra.','Dna C Norte 3ra.','Dna C Sur 4ta.','Dna C Sur 6ta.','Dna D Norte 1ra.','Dna D Norte 3ra.','Dna D Sur 1ra.','Dna D Sur 3ra.','Dna E Norte 1ra.','Dna E Norte 2da.','Dna E Norte 3ra.','Dna E Sur 3ra.','Dna E Sur 4ta.','Espigón 4to.','Espigón 5to.','Espigón 6to.','Dna Norte — Apostadero Naval','Dna Norte — Muelle entre diques','Dna Norte — Sección 2','Dna Norte — Sección 3','Dna Norte — Sección 5','Dna Norte — Sección 6'],
+  dsur:['Dna Sur — Lado Este','Dna Sur — Lado Oeste','Dna del Este 1 — Syncrolift','Dna del Este 1 — Muelle alistamiento','Dna del Este 1 — Muelle Calderería','Dna del Este 2','Muelle Central Costanera','Dna Propaneros — Lado Este','Dna Propaneros — Lado Oeste','Dna Inflamables — Muelle A”','Dna Inflamables — Muelle A','Dna Inflamables — Muelle B','Dna Inflamables — Muelle C','Dna Inflamables — Muelle E','Dna Inflamables — Muelle F','Dock Sud 1ra. — Exolgan Sitio 1','Dock Sud 1ra. — Exolgan Sitio 2','Dock Sud 1ra. — Exolgan Sitio 3','Dock Sud 1ra. — Sitio 7','Dock Sud 1ra. — Muelle B','Dock Sud 1ra. — Muelle C','Dock Sud 1ra. — Muelle D','Dock Sud 2da. — Sitio 9','Dock Sud 2da. — Sitio 10','Dock Sud 2da. — Sitio 11','Dock Sud 2da. — Sitio 12','Dock Sud 2da. — Muelle E']
+});
+const BUQ={
+ 'CABO PILAR':{e:228,m:32.20,p:19.80,band:'ARGENTINA',s:'LW3373'},
+ 'CABO VIRGENES':{e:228,m:32.20,p:19.80,band:'ARGENTINA',s:'LW3100'},
+ 'CABO DE HORNOS':{e:228.5,m:32.30,p:20.66,band:'PANAMÁ',s:''},
+ 'JULIO A':{e:120,m:20.40,p:11.90,band:'ARGENTINA',s:''},
+ 'PUNTA QUILLA':{e:145,m:23,p:12.50,band:'ARGENTINA',s:''},
+ 'POLARIS':{e:128.6,m:20.40,p:11.50,band:'ARGENTINA',s:''},
+ 'PALENA STAR':{e:129,m:20.40,p:11.50,band:'LIBERIA',s:''},
+ 'VALDIVIA STAR':{e:129,m:20.40,p:11.50,band:'LIBERIA',s:''},
+ 'TIGER PLATA':{e:169.99,m:28.10,p:14.20,band:'SINGAPUR',s:''},
+ 'MSC AINO':{e:328.46,m:48.20,p:27.20,band:'LIBERIA',s:''},
+ 'MSC CATERINA':{e:299.95,m:48.20,p:24.60,band:'PORTUGAL',s:''},
+ 'MSC LUDOVICA':{e:300,m:40,p:24.20,band:'PANAMÁ',s:''},
+ 'MSC PHOENIX':{e:299.95,m:40,p:24,band:'LIBERIA',s:''},
+ 'ONE SYNERGY':{e:335.93,m:51,p:30.10,band:'SINGAPUR',s:''},
+ 'NAVIOS DOMINO':{e:260,m:32.25,p:19.30,band:'LIBERIA',s:''},
+ 'LARGO EMERALD':{e:183,m:32,p:18.30,band:'LIBERIA',s:''},
+ 'CALETA ROSARIO':{e:139.95,m:21,p:10.60,band:'ARGENTINA',s:''}
+};
+let DESP=dbLoadDesp();
+let LOG=store.get('bit3_log',[]);
+let LASTHASH=store.get('bit3_lasthash','GENESIS');
+let NROSEQ=store.get('bit3_nroseq',0);
+let MAREAS=store.get('bit3_mareas',[]);
+let CUR=null;
+
+const STAMPS=[['embarco','Embarco'],['inicio','Inicio de maniobra'],['fin','Final de maniobra'],['desembarco','Desembarco']];
+const RUTA_ENT=[['zc','Zona Común'],['k37','Km. 37'],['k22','Km. 22'],['k11','Km. 11'],['ante','Antepuerto']];
+const RUTA_SAL=[['ante','Antepuerto'],['k11','Km. 11'],['k22','Km. 22'],['k37','Km. 37'],['zc','Zona Común']];
+function sentidoServ(d){ // 'ent' | 'sal' | '' (mov sin elegir)
+  if((d.serv||'').startsWith('ENT')||d.es==='E')return 'ent';
+  if((d.serv||'').startsWith('SAL')||d.es==='S')return 'sal';
+  return d.rutaSentido||''; // MOV: lo define el usuario
+}
+function rutaDefs(d){const sd=sentidoServ(d);return sd==='ent'?RUTA_ENT:sd==='sal'?RUTA_SAL:[];}
+const REMOL=['Proa','Popa','3ro'];
+if(!PARAMS.remolc||Array.isArray(PARAMS.remolc)){PARAMS.remolc=['RUA CAP. LUCIO R','QUERANDÍ','RUA DON JOSE','RANQUEL','ONA DON LORENZO','ONA DON VICENTE','BERNARDO R','TOCONAO','MORA','DAMKA'];}
+if(!PARAMS.remolcBP){PARAMS.remolcBP={'RUA CAP. LUCIO R':60,'QUERANDÍ':60,'RUA DON JOSE':60,'RANQUEL':76.8,'ONA DON LORENZO':60,'ONA DON VICENTE':46.5,'BERNARDO R':60,'TOCONAO':52,'MORA':60,'DAMKA':60};}
+const TRAMOS=['Dom–Bsso','Bsso–Dom','Dom–Pto','Pto–Dom'];
+const DEMCAUSAS=['A orden','Zarpada','Navegación','Desembarcar','Buque','Lancha','Transp. terrestre','Otros'];
+/*__CSS_NOM__*/const EST={nominado:{t:'Nominado · s/n',c:'#8a6d3b'},asignado:{t:'Asignado',c:'var(--muted)'},encurso:{t:'En curso',c:'var(--cyan)'},pendasesor:{t:'A observar',c:'var(--amber)'},cerrado:{t:'Cerrado',c:'var(--green)'},anulado:{t:'Anulado',c:'var(--red)'}};
+
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+function nowISO(){return new Date().toISOString();}
+function fmtHM(iso){if(!iso)return'';const d=new Date(iso);return pad(d.getHours())+':'+pad(d.getMinutes());}
+function fmtFull(iso){if(!iso)return'';const d=new Date(iso);return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear()+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());}
+function toast(m,err){const t=$('toast');t.textContent=m;t.className='toast show'+(err?' err':'');clearTimeout(t._h);t._h=setTimeout(()=>t.className='toast',3800);}
+function save(){dbWriteDesp(DESP);store.set("bit3_params",PARAMS);store.set("bit3_log",LOG);store.set("bit3_lasthash",LASTHASH);store.set("bit3_nroseq",NROSEQ);store.set("bit3_mareas",MAREAS);if(CUR&&api.isOnline)api.pushDespacho(CUR).catch(()=>{});}
+
+async function hashStr(s){
+  try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+    return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
+  catch(e){let h=5381;for(let i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))>>>0;}return 'djb2-'+h.toString(16);}
+}
+async function audit(evt,detail){
+  const e={t:nowISO(),evt,detail,prev:LASTHASH};
+  e.hash=await hashStr(JSON.stringify(e));
+  LASTHASH=e.hash;LOG.push(e);if(LOG.length>900)LOG=LOG.slice(-900);
+  save();renderLog();
+}
+function go(p){
+  document.querySelectorAll('.pane').forEach(x=>x.classList.remove('on'));
+  $(p).classList.add('on');
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.p===p));
+  document.querySelector('main').scrollTop=0;
+}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{go(b.dataset.p);if(b.dataset.p==='p-exp')renderExp();});
+document.querySelectorAll('.back').forEach(b=>b.onclick=()=>go(b.dataset.go));
+function netUI(){const on=navigator.onLine;$('net').className='net '+(on?'on':'off');$('net-t').textContent=on?'En línea':'Sin señal · offline';}
+window.addEventListener('online',()=>{netUI();toast('Conexión recuperada. Podés exportar y enviar.');});
+window.addEventListener('offline',()=>{netUI();toast('Sin señal. Todo se guarda en el dispositivo.');});
+
+/* ---------- helpers UI ---------- */
+
+/* orden natural: alfabético A→Z y números de menor a mayor (Km 11 antes que Km 37) */
+function ordenarNatural(arr){
+  return [...arr].sort((a,b)=>String(a).localeCompare(String(b),'es',{numeric:true,sensitivity:'base'}));
+}
+
+// ===== DESPLEGABLE CONFIABLE (se abre siempre + permite agregar a mano) =====
+const PICKERS={};
+function makePicker(inputId, getOptions, onPick){
+  const inp=document.getElementById(inputId); if(!inp||PICKERS[inputId])return;
+  const wrap=inp.closest('.pickwrap')|| (function(){ // si no está en pickwrap, lo envuelvo
+    const w=document.createElement('span');w.className='pickwrap';w.style.display='block';
+    inp.parentNode.insertBefore(w,inp);w.appendChild(inp);return w;})();
+  const pop=document.createElement('div');pop.className='pick-pop';wrap.appendChild(pop);
+  let kbdIdx=-1;
+  function render(filter){
+    const all=(getOptions()||[]);
+    const f=(filter||'').trim().toLowerCase();
+    let list=f?all.filter(o=>String(o.label||o).toLowerCase().includes(f)):all;
+    let html=list.map((o,i)=>{const val=(o.value!==undefined?o.value:o);const lab=(o.label!==undefined?o.label:o);
+      return '<div class="pick-opt" data-val="'+String(val).replace(/"/g,'&quot;')+'">'+lab+'</div>';}).join('');
+    // opción para usar lo escrito si no coincide exactamente
+    if(f && !all.some(o=>String(o.value!==undefined?o.value:o).toLowerCase()===f)){
+      html+='<div class="pick-opt add" data-val="'+inp.value.replace(/"/g,'&quot;')+'" data-add="1">✏️ Usar "'+inp.value+'"</div>';
+    }
+    if(!html)html='<div class="pick-empty">Escribí para agregar uno nuevo…</div>';
+    pop.innerHTML=html;kbdIdx=-1;
+  }
+  function open(){render(inp.value);pop.classList.add('on');}
+  function close(){pop.classList.remove('on');}
+  inp.addEventListener('focus',open);
+  inp.addEventListener('click',open);
+  inp.addEventListener('input',()=>{render(inp.value);pop.classList.add('on');});
+  const caret=wrap.querySelector('.caret');
+  if(caret){caret.style.pointerEvents='auto';caret.style.cursor='pointer';caret.addEventListener('click',(e)=>{e.preventDefault();inp.focus();if(pop.classList.contains('on'))close();else open();});}
+  pop.addEventListener('mousedown',(e)=>{ // mousedown para ganarle al blur
+    const opt=e.target.closest('.pick-opt');if(!opt||opt.classList.contains('pick-empty'))return;
+    e.preventDefault();const val=opt.getAttribute('data-val');inp.value=val;close();
+    if(onPick)onPick(val);
+    inp.dispatchEvent(new Event('input',{bubbles:true}));inp.dispatchEvent(new Event('change',{bubbles:true}));
+  });
+  inp.addEventListener('blur',()=>{setTimeout(close,150);});
+  inp.addEventListener('keydown',(e)=>{
+    const opts=[...pop.querySelectorAll('.pick-opt')];
+    if(e.key==='ArrowDown'){kbdIdx=Math.min(kbdIdx+1,opts.length-1);}
+    else if(e.key==='ArrowUp'){kbdIdx=Math.max(kbdIdx-1,0);}
+    else if(e.key==='Enter'){if(kbdIdx>=0&&opts[kbdIdx]){opts[kbdIdx].dispatchEvent(new MouseEvent('mousedown',{bubbles:true}));e.preventDefault();}close();return;}
+    else if(e.key==='Escape'){close();return;}
+    else return;
+    opts.forEach((o,i)=>o.classList.toggle('kbd',i===kbdIdx));
+    if(opts[kbdIdx])opts[kbdIdx].scrollIntoView({block:'nearest'});
+    e.preventDefault();
+  });
+  PICKERS[inputId]={refresh:()=>{if(pop.classList.contains('on'))render(inp.value);}};
+}
+function fillSelect(id,arr,sel){const el=$(id);if(!el)return;arr=ordenarNatural(arr);if(el.tagName==='DATALIST'){el.innerHTML=arr.map(x=>'<option>'+x+'</option>').join('');}else{el.innerHTML=arr.map(x=>'<option'+(x===sel?' selected':'')+'>'+x+'</option>').join('');if(sel!==undefined)el.value=sel;}}
+function destSelect(id,sel){
+  let h='<option'+('ZONA COMÚN'===sel?' selected':'')+'>ZONA COMÚN</option>';
+  h+='<optgroup label="Pto. Norte">'+PARAMS.dnorte.map(x=>'<option'+(x===sel?' selected':'')+'>'+x+'</option>').join('')+'</optgroup>';
+  h+='<optgroup label="Pto. Sur">'+PARAMS.dsur.map(x=>'<option'+(x===sel?' selected':'')+'>'+x+'</option>').join('')+'</optgroup>';
+  $(id).innerHTML=h;
+}
+function segInit(id,val,onset){
+  const s=$(id);
+  s.querySelectorAll('button').forEach(b=>{
+    b.classList.toggle('on',b.dataset.v===val);
+    b.onclick=()=>{s.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');onset&&onset(b.dataset.v);};
+  });
+}
+function segVal(id){const b=$(id).querySelector('button.on');return b?b.dataset.v:'';}
+function tagsInit(id,opts,selArr,onchg,amber){
+  $(id).innerHTML=opts.map(o=>'<button type="button" class="tag'+(selArr.includes(o)?' on':'')+(amber?' amb':'')+'">'+o+'</button>').join('');
+  $(id).querySelectorAll('.tag').forEach(b=>b.onclick=()=>{
+    b.classList.toggle('on');
+    const v=[...$(id).querySelectorAll('.tag.on')].map(x=>x.textContent);
+    onchg(v);
+  });
+}
+
+/* ---------- UF / CF automáticos (regla de la planilla FACT) ---------- */
+function calcCF(){
+  const e=parseFloat($('n-eslora').value),m=parseFloat($('n-manga').value),p=parseFloat($('n-puntal').value);
+  if(e>0&&m>0&&p>0){const uf=e*m*p/800;$('n-uf').value=uf.toFixed(4);$('n-cf').value=Math.max(65,Math.ceil(uf-1e-9));}
+  else{$('n-uf').value='—';$('n-cf').value='—';}
+}
+['n-eslora','n-manga','n-puntal'].forEach(i=>$(i).addEventListener('input',calcCF));
+function servOf(){const d=$('n-desde').value,h=$('n-hasta').value;
+  return d==='ZONA COMÚN'?'ENT-ZC':(h==='ZONA COMÚN'?'SAL-ZC':'MOV');}
+function buqFill(){
+  const b=BUQ[$('n-buque').value.trim().toUpperCase()];
+  if(b){$('n-eslora').value=b.e;$('n-manga').value=b.m;$('n-puntal').value=b.p||'';
+    if(b.band)fillSelect('n-band',PARAMS.band,b.band);
+    if(b.s)$('n-senal').value=b.s;
+    calcCF();}
+}
+$('n-buque').addEventListener('change',buqFill);
+$('n-buque').addEventListener('blur',buqFill);
+
+/* ---------- despachos ---------- */
+
+function renderDesp(){
+  $('d-count').textContent=DESP.length;
+  const host=$('dlist');
+  let base=[...DESP];
+  const q=((document.getElementById('buscar-desp')||{}).value||'').trim().toLowerCase();
+  if(q){base=base.filter(d=>{
+    const nro=String(d.nroFinal||d.nro||'');
+    const fch=(d.fecha||'').split('-').reverse().join('/');
+    return nro.includes(q)||(d.buque||'').toLowerCase().includes(q)||fch.includes(q)||(d.agen||'').toLowerCase().includes(q)||(d.prac||'').toLowerCase().includes(q);
+  });}
+  const sorted=base.sort((a,b)=>(b.fecha+b.hora).localeCompare(a.fecha+a.hora));
+  if(!sorted.length){host.innerHTML='<div class="empty">No hay despachos cargados.<br>Tocá <b>Nuevo despacho</b> para asignar el primero.</div>';}
+  else host.innerHTML=sorted.map(d=>{
+    const e=EST[d.estado]||{t:(d.estado||'—'),c:'var(--muted)'};
+    const nro=(d.nroFinal||d.nro)?('Nº '+(d.nroFinal||d.nro)):'S/N';
+    return '<div class="dcard" data-id="'+d.id+'">'+
+      '<div class="top"><span class="nro'+((!d.nro)?' sinnro':'')+'">'+nro+'</span>'+
+      '<span class="st" style="color:'+e.c+';border-color:'+e.c+'">'+e.t+'</span></div>'+
+      '<div class="ln"><b>'+(d.buque||'—')+'</b> · '+(d.serv||'')+(d.cf?' · CF '+d.cf:'')+'</div>'+
+      '<div class="ln">'+(d.desde||'—')+' → '+(d.hasta||'—')+'</div>'+
+      '<div class="mt">'+(d.agen||'—')+' · pedido '+((d.fecha||'').split('-').reverse().join('/'))+' '+(d.hora||'')+' · '+(d.prac||'—')+'</div>'+
+      '<div class="dcard-acts">'+
+        '<button class="dca" data-editvale="'+d.id+'">✎ Editar</button>'+
+        ((!d.nro)?'<button class="dca asig" data-asigvale="'+d.id+'">+ Asignar N°</button>':'')+
+      '</div>'+
+    '</div>';
+  }).join('');
+  host.querySelectorAll('.dcard').forEach(c=>c.onclick=(ev)=>{
+    if(ev.target.closest('.dca'))return; // no abrir si tocó un botón de acción
+    openVale(c.dataset.id);
+  });
+  host.querySelectorAll('[data-editvale]').forEach(b=>b.onclick=(ev)=>{ev.stopPropagation();editarDespVale(b.dataset.editvale);});
+  host.querySelectorAll('[data-asigvale]').forEach(b=>b.onclick=(ev)=>{ev.stopPropagation();
+    const d=DESP.find(x=>x.id===b.dataset.asigvale);if(!d)return;
+    const sug=asignarNroSugerido();
+    const nv=prompt('Asignar número de despacho (correlativo).\n\nBuque: '+d.buque+'\nSugerido: '+sug,sug);
+    if(nv===null)return;
+    d.nro=nv.trim();d.nroFinal=d.nro;if(d.estado==='nominado')d.estado='asignado';
+    dbWriteOne(d);DESP=dbLoadDesp();renderDesp();
+    audit('NRO_ASIGNADO','Nº '+d.nro+' · '+d.buque+' (era nominado)');toast('Número '+d.nro+' asignado.');
+  });
+  const cer=DESP.filter(d=>d.estado==='cerrado').length;
+  $('bdg-exp').style.display=cer?'grid':'none';$('bdg-exp').textContent=cer;
+}
+(function(){const bd=document.getElementById('buscar-desp');if(bd)bd.addEventListener('input',()=>renderDesp());})();
+let VALE_EDIT_ID=null;
+function editarDespVale(id){
+  const d=DESP.find(x=>x.id===id);if(!d)return;
+  VALE_EDIT_ID=id;
+  fillSelect('dl-n-agen',PARAMS.agen);fillSelect('dl-n-band',PARAMS.band);fillSelect('dl-n-prac',PARAMS.pra);
+  makePicker('n-agen',()=>ordenarNatural(PARAMS.agen||[]));makePicker('n-band',()=>ordenarNatural(PARAMS.band||[]));
+  makePicker('n-prac',()=>ordenarNatural(PARAMS.pra||[]));makePicker('n-prac2',()=>ordenarNatural(PARAMS.pra||[]));
+  $('buq-list').innerHTML=Object.keys(BUQ).map(b=>'<option>'+b+'</option>').join('');
+  destSelect('n-desde');destSelect('n-hasta');
+  if($('n-nro'))$('n-nro').value=d.nro||'';
+  $('n-buque').value=d.buque||'';$('n-agen').value=d.agen||'';$('n-band').value=d.band||'';
+  $('n-senal').value=d.senal||'';$('n-eslora').value=d.eslora||'';$('n-manga').value=d.manga||'';$('n-puntal').value=d.puntal||'';
+  $('n-uf').value=d.uf||'—';$('n-cf').value=d.cf||'—';
+  $('n-cpr').value=d.cpr||'';$('n-cpp').value=d.cpp||'';
+  $('n-fecha').value=d.fecha||'';$('n-hora').value=d.hora||'';
+  $('n-desde').value=d.desde||'';$('n-hasta').value=d.hasta||'';
+  $('n-serv').value=d.serv||servOf();
+  $('n-prac').value=d.prac||'';$('n-prac2').value=d.prac2||'';
+  segInit('n-bow',d.bow||'ok');
+  if($('new-titulo'))$('new-titulo').textContent='Editar despacho '+(d.nro?('Nº '+d.nro):'(nominado)');
+  if($('btn-save-new'))$('btn-save-new').textContent='Guardar cambios';
+  go('p-new');
+}
+$('btn-new').onclick=()=>{
+  fillSelect('dl-n-agen',PARAMS.agen);fillSelect('dl-n-band',PARAMS.band);fillSelect('dl-n-prac',PARAMS.pra);
+  makePicker('n-agen',()=>ordenarNatural(PARAMS.agen||[]));
+  makePicker('n-band',()=>ordenarNatural(PARAMS.band||[]));
+  makePicker('n-prac',()=>ordenarNatural(PARAMS.pra||[]));
+  makePicker('n-prac2',()=>ordenarNatural(PARAMS.pra||[]));
+  $('n-agen').value='';$('n-band').value='';$('n-prac').value='';$('n-prac2').value='';
+  $('buq-list').innerHTML=Object.keys(BUQ).map(b=>'<option>'+b+'</option>').join('');
+  destSelect('n-desde');destSelect('n-hasta');
+  $('n-serv').value=servOf();
+  $('n-desde').onchange=()=>$('n-serv').value=servOf();
+  $('n-hasta').onchange=()=>$('n-serv').value=servOf();
+  const d=new Date();
+  $('n-fecha').value=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  $('n-hora').value=pad(d.getHours())+':'+pad(d.getMinutes());
+  ['n-buque','n-senal','n-eslora','n-manga','n-puntal','n-cpr','n-cpp'].forEach(i=>$(i).value='');
+  $('n-cf').value='—';$('n-uf').value='—';
+  segInit('n-bow','ok');
+  if($('n-nro'))$('n-nro').value='';
+  VALE_EDIT_ID=null;
+  if($('new-titulo'))$('new-titulo').textContent='Carga nuevo servicio';
+  if($('btn-save-new'))$('btn-save-new').textContent='Guardar despacho';
+  go('p-new');
+};
+$('btn-save-new').onclick=async()=>{
+  if(!$('n-buque').value.trim()){toast('Cargá el nombre del buque.',1);return;}
+  if($('n-cf').value==='—'){toast('Cargá las medidas para calcular el CF.',1);return;}
+  const nroIngresado=($('n-nro')?$('n-nro').value.trim():'');
+  let d;
+  if(VALE_EDIT_ID){ // EDITAR existente
+    d=DESP.find(x=>x.id===VALE_EDIT_ID)||{};
+    d.nro=nroIngresado;d.nroFinal=nroIngresado;
+  } else { // NUEVO (puede ser nominado)
+    d={id:nuevoId(),nro:nroIngresado,nroFinal:nroIngresado,estado:nroIngresado?'asignado':'nominado',
+       lancha:'',rem:'',tramos:[],remol:[],remolNom:{},cmaq:'si',
+       stamps:{},ruta:{},demoras:[],obsChips:[],obsTxt:'',creado:nowISO(),cerradoPor:'',cerradoEn:''};
+  }
+  d.buque=$('n-buque').value.trim().toUpperCase();d.agen=$('n-agen').value;
+  d.band=$('n-band').value;d.senal=$('n-senal').value.trim().toUpperCase();
+  d.eslora=$('n-eslora').value;d.manga=$('n-manga').value;d.puntal=$('n-puntal').value;
+  d.uf=$('n-uf').value;d.cf=$('n-cf').value;d.serv=$('n-serv').value;
+  d.cpr=$('n-cpr').value;d.cpp=$('n-cpp').value;
+  d.fecha=$('n-fecha').value;d.hora=$('n-hora').value;
+  d.desde=$('n-desde').value;d.hasta=$('n-hasta').value;d.bow=segVal('n-bow');
+  d.prac=$('n-prac').value;d.prac2=$('n-prac2').value.trim();
+  if(VALE_EDIT_ID){
+    dbWriteOne(d);DESP=dbLoadDesp();renderDesp();
+    await audit('DESPACHO_EDITADO',(d.nro?('Nº '+d.nro):'(nominado)')+' · '+d.buque);
+    toast('Despacho actualizado.');
+  } else {
+    DESP.push(d);save();renderDesp();
+    if(nroIngresado){await audit('NRO_ASIGNADO','Nº '+d.nro+' · '+d.buque+' · CF '+d.cf);
+      pushNotif('Nuevo despacho Nº '+d.nro+' · '+d.buque,'nuevo');toast('Nº '+d.nro+' creado · práctico '+d.prac+'.');}
+    else {await audit('DESPACHO_NOMINADO',d.buque+' · sin número');
+      pushNotif('Despacho nominado · '+d.buque+' (s/n)','nuevo');toast('Despacho nominado, sin número. Le asignás el N° cuando se confirme.');}
+  }
+  VALE_EDIT_ID=null;
+  go('p-desp');
+};
+
+/* ---------- vale ---------- */
+function openVale(id){
+  CUR=DESP.find(d=>d.id===id);if(!CUR)return;
+  $('v-nro').textContent=CUR.nroFinal?('Nº '+CUR.nroFinal):CUR.nro;
+  $('v-info').innerHTML=
+    '<div class="kv"><span>Buque</span><span>'+CUR.buque+'</span></div>'+
+    '<div class="kv"><span>Agencia</span><span>'+CUR.agen+'</span></div>'+
+    '<div class="kv"><span>Bandera / Señal</span><span>'+CUR.band+' · '+(CUR.senal||'—')+'</span></div>'+
+    '<div class="kv"><span>Medidas (E×M×P)</span><span>'+CUR.eslora+' × '+CUR.manga+' × '+CUR.puntal+' m</span></div>'+
+    '<div class="kv"><span>UF / CF</span><span style="color:var(--gold2)">'+(CUR.uf||'—')+' / '+CUR.cf+'</span></div>'+
+    '<div class="kv"><span>Desde → Hasta</span><span>'+CUR.desde+' → '+CUR.hasta+'</span></div>'+
+    '<div class="kv"><span>Servicio</span><span>'+(CUR.serv||'—')+'</span></div>'+
+    '<div class="kv"><span>Práctico/s</span><span>'+CUR.prac+(CUR.prac2?' + '+CUR.prac2:'')+'</span></div>';
+  $('v-pedido').textContent=CUR.fecha.split('-').reverse().join('/')+' '+CUR.hora;
+  const cc=$('v-cond');
+  if((CUR.cortes&&CUR.cortes.length)||CUR.resumen){
+    cc.innerHTML='<div class="sec">Condiciones registradas (torre)</div><div class="fcard">'+
+      (CUR.cortes||[]).map(c=>'<div class="condline">⏱ <b>'+fmtFull(c.t)+'</b> — Marea '+c.marea+' m ('+c.tend+')'+(c.viento?' · Viento '+c.viento:'')+(c.visib?' · Visib. '+c.visib:'')+(c.rio?' · '+c.rio:'')+(c.obs?' · '+c.obs:'')+'<div class="condh">Fuentes: '+((c.fuentes||[]).join(', ')||'—')+' · sello #'+(c.hash||'').slice(0,16)+'…</div></div>').join('')+
+      (CUR.resumen?'<div class="condres">📝 <b>Condiciones generales:</b> '+CUR.resumen+'</div>':'')+
+    '</div>';
+  } else cc.innerHTML='';
+  const locked=CUR.estado==='cerrado';
+  $('v-cpr').value=CUR.cpr;$('v-cpp').value=CUR.cpp;$('v-obstxt').value=CUR.obsTxt;
+  ['v-cpr','v-cpp','v-obstxt'].forEach(i=>$(i).disabled=locked);
+  segInit('v-bow',CUR.bow,v=>{CUR.bow=v;save();});
+  segInit('v-cmaq',CUR.cmaq,v=>{CUR.cmaq=v;save();});
+  fillSelect('dl-v-lancha',PARAMS.lan);fillSelect('dl-v-rem',PARAMS.rem);$('v-lancha').value=CUR.lancha||'';$('v-rem').value=CUR.rem||'';
+  makePicker('v-lancha',()=>ordenarNatural(PARAMS.lan||[]));
+  makePicker('v-rem',()=>ordenarNatural(PARAMS.rem||[]));
+  $('v-lancha').disabled=locked;$('v-rem').disabled=locked;
+  // remolcadores con nombre (proa/popa/tercero)
+  CUR.remolNom=CUR.remolNom||{};
+  (function(){const dl=$('dl-remolc');if(dl){const arr=(PARAMS.remolc||[]);dl.innerHTML=ordenarNatural(arr).map(x=>{const bp=(PARAMS.remolcBP||{})[x];return '<option value=\''+x+'\'>'+(bp!==undefined?(x+' — BP '+bp+' t'):x)+'</option>';}).join('');}})();
+  $('v-rem-proa').value=CUR.remolNom.proa||'';
+  $('v-rem-popa').value=CUR.remolNom.popa||'';
+  $('v-rem-3ro').value=CUR.remolNom.tercero||'';
+  (function(){const opts=()=>ordenarNatural(PARAMS.remolc||[]).map(x=>{const bp=(PARAMS.remolcBP||{})[x];return {value:x,label:(bp!==undefined?(x+' — BP '+bp+' t'):x)};});
+    makePicker('v-rem-proa',opts);makePicker('v-rem-popa',opts);makePicker('v-rem-3ro',opts);})();
+  function bpDe(nombre){const bp=(PARAMS.remolcBP||{})[(nombre||'').trim().toUpperCase()];return bp!==undefined?bp:'';}
+  function refreshBP(){
+    const tot=['proa','popa','tercero'].reduce((a,k)=>{const bp=bpDe(CUR.remolNom[k]);return a+(parseFloat(bp)||0);},0);
+    const el=$('v-bp-total');if(el)el.textContent=tot?('BP total: '+tot.toFixed(1)+' t'):'';
+  }
+  [['v-rem-proa','proa'],['v-rem-popa','popa'],['v-rem-3ro','tercero']].forEach(([id,k])=>{
+    $(id).addEventListener('input',()=>{CUR.remolNom[k]=$(id).value.trim().toUpperCase();CUR.remolBP=CUR.remolBP||{};CUR.remolBP[k]=bpDe(CUR.remolNom[k]);save();refreshBP();});
+  });
+  refreshBP();
+  tagsInit('v-tramos',TRAMOS,CUR.tramos,v=>{CUR.tramos=v;save();});
+  tagsInit('v-obschips',PARAMS.obs,CUR.obsChips,v=>{CUR.obsChips=v;save();},true);
+  if(locked){['v-tramos','v-obschips'].forEach(id=>$(id).querySelectorAll('.tag').forEach(b=>b.style.pointerEvents='none'));['v-rem-proa','v-rem-popa','v-rem-3ro'].forEach(id=>$(id).disabled=true);}
+  renderStamps();renderRuta();renderDemoras();renderFlow();renderFirmas();
+  go('p-vale');
+}
+function renderStamps(){
+  const locked=CUR.estado==='cerrado';
+  CUR.stampsMeta=CUR.stampsMeta||{};
+  $('v-stamps').innerHTML=STAMPS.map(([k,label])=>{
+    const v=CUR.stamps[k];const meta=CUR.stampsMeta[k]||{};
+    const dif=meta.modo==='manual';
+    return '<div class="stamp '+(v?'done':'')+'"><div class="si"><div class="sl">'+label+'</div>'+
+      (v?'<div class="sv">'+fmtHM(v)+'</div><div class="sd'+(dif?' dif':'')+'">'+fmtFull(v)+'</div>'+
+        (dif?'<div class="difbadge">✎ cargada a mano'+(meta.asentada?' · asentada '+fmtHM(meta.asentada):'')+'</div>':'')
+        :'<div class="sv pend">Sin registrar</div>')+
+      '</div>'+(locked?'<button>✓</button>':
+        '<div class="sbtns">'+
+        (v?'':'<button data-k="'+k+'" onclick="vMarcarStamp(\''+k+'\')">Marcar<br>ahora</button>')+
+        '<button class="editar" data-edit="'+k+'" onclick="openHora(\''+k+'\')">'+(v?'✎ Corregir':'⌨ Cargar<br>hora')+'</button>'+
+        (v?'<button class="editar clr" data-del="'+k+'" onclick="vBorrarStamp(\''+k+'\')">🗑 Borrar</button>':'')+
+        '</div>')+'</div>';
+  }).join('');
+  function label(k){const f=STAMPS.find(x=>x[0]===k);return f?f[1]:k;}
+}
+// Delegación GLOBAL en document: funciona siempre, sin importar re-renders ni timing.
+// ===== FUNCIONES GLOBALES (onclick inline + delegación, doble seguro) =====
+window.vMarcarStamp=function(k){
+  const iso=nowISO();CUR.stamps[k]=iso;CUR.stampsMeta=CUR.stampsMeta||{};CUR.stampsMeta[k]={modo:'ahora',asentada:iso};
+  if(CUR.estado==='asignado')CUR.estado='encurso';
+  save();renderStamps();renderFlow();renderDesp();
+  audit('HORA_MARCADA',(CUR.nroFinal||CUR.nro)+' · '+k+' · '+fmtFull(iso));toast('Hora registrada '+fmtHM(iso)+'.');
+};
+window.vBorrarStamp=function(k){
+  const lab=(STAMPS.find(x=>x[0]===k)||['',k])[1];
+  if(!confirm('¿Borrar la hora de '+lab+'?'))return;
+  delete CUR.stamps[k];if(CUR.stampsMeta)delete CUR.stampsMeta[k];
+  save();renderStamps();renderFlow();renderDesp();
+  audit('HORA_BORRADA',(CUR.nroFinal||CUR.nro)+' · '+k);toast('Hora de '+lab+' borrada.');
+};
+window.vMarcarRuta=function(k){
+  const iso=nowISO();CUR.ruta[k]=iso;CUR.rutaMeta=CUR.rutaMeta||{};CUR.rutaMeta[k]={modo:'ahora',asentada:iso};
+  if(CUR.estado==='asignado')CUR.estado='encurso';
+  save();renderRuta();renderFlow();audit('RUTA',(CUR.nroFinal||CUR.nro)+' · '+k+' · '+fmtFull(iso));
+};
+window.vBorrarRuta=function(k){
+  if(!confirm('¿Borrar la hora de '+k.toUpperCase()+'?'))return;
+  delete CUR.ruta[k];if(CUR.rutaMeta)delete CUR.rutaMeta[k];save();renderRuta();renderFlow();
+  audit('RUTA_BORRADA',(CUR.nroFinal||CUR.nro)+' · '+k);
+};
+// ===== LISTENER UNIFICADO: maneja horas de maniobra + hoja de ruta + demoras =====
+document.addEventListener('click',function(ev){
+  const btn=ev.target&&ev.target.closest?ev.target.closest('button'):null; if(!btn)return;
+  if(typeof CUR==='undefined'||!CUR)return;
+  const inStamps=btn.closest('#v-stamps');
+  const inRuta=btn.closest('#v-ruta');
+  const inDem=btn.closest('#v-demoras');
+  if(!inStamps&&!inRuta&&!inDem)return;
+
+  // --- HORAS DE MANIOBRA (#v-stamps) ---
+  if(inStamps){
+    const kM=btn.getAttribute('data-k'), kE=btn.getAttribute('data-edit'), kD=btn.getAttribute('data-del');
+    if(kM){
+      const iso=nowISO();CUR.stamps[kM]=iso;CUR.stampsMeta=CUR.stampsMeta||{};CUR.stampsMeta[kM]={modo:'ahora',asentada:iso};
+      if(CUR.estado==='asignado')CUR.estado='encurso';
+      save();renderStamps();renderFlow();renderDesp();
+      audit('HORA_MARCADA',(CUR.nroFinal||CUR.nro)+' · '+kM+' · '+fmtFull(iso));
+      toast('Hora registrada '+fmtHM(iso)+'.');return;
+    }
+    if(kE){ openHora(kE); return; }
+    if(kD){
+      const lab=(STAMPS.find(x=>x[0]===kD)||['',kD])[1];
+      if(!confirm('¿Borrar la hora de '+lab+'?'))return;
+      delete CUR.stamps[kD];if(CUR.stampsMeta)delete CUR.stampsMeta[kD];
+      save();renderStamps();renderFlow();renderDesp();
+      audit('HORA_BORRADA',(CUR.nroFinal||CUR.nro)+' · '+kD);toast('Hora de '+lab+' borrada.');return;
+    }
+    return;
+  }
+
+  // --- HOJA DE RUTA (#v-ruta) ---
+  if(inRuta){
+    const kM=btn.getAttribute('data-k'), kE=btn.getAttribute('data-redit'), kD=btn.getAttribute('data-rdel');
+    if(kM){
+      const iso=nowISO();CUR.ruta[kM]=iso;CUR.rutaMeta=CUR.rutaMeta||{};CUR.rutaMeta[kM]={modo:'ahora',asentada:iso};
+      if(CUR.estado==='asignado')CUR.estado='encurso';
+      save();renderRuta();renderFlow();
+      audit('RUTA',(CUR.nroFinal||CUR.nro)+' · '+kM+' · '+fmtFull(iso));return;
+    }
+    if(kE){ openHoraRuta(kE); return; }
+    if(kD){
+      if(!confirm('¿Borrar la hora de '+kD.toUpperCase()+'?'))return;
+      delete CUR.ruta[kD];if(CUR.rutaMeta)delete CUR.rutaMeta[kD];save();renderRuta();renderFlow();
+      audit('RUTA_BORRADA',(CUR.nroFinal||CUR.nro)+' · '+kD);return;
+    }
+    return;
+  }
+
+  // --- DEMORAS (#v-demoras) ---
+  if(inDem){
+    const pad=n=>String(n).padStart(2,'0');
+    if(btn.classList.contains('del')&&btn.dataset.i!==undefined&&!btn.dataset.dw){
+      CUR.demoras.splice(+btn.dataset.i,1);save();renderDemoras();return;
+    }
+    const w=btn.getAttribute('data-w');
+    if(w&&btn.dataset.i!==undefined){
+      const iso=nowISO();CUR.demoras[+btn.dataset.i][w]=iso;save();renderDemoras();
+      audit('DEMORA',(CUR.nroFinal||CUR.nro)+' · '+CUR.demoras[+btn.dataset.i].causa+' · '+w+' '+fmtFull(iso));return;
+    }
+    if(btn.dataset.dm!==undefined){
+      const i=+btn.dataset.dm,ww=btn.dataset.dw;
+      const cur=CUR.demoras[i][ww]?new Date(CUR.demoras[i][ww]):new Date();
+      const h=prompt('Hora '+ww+' de la demora (hh:mm):',pad(cur.getHours())+':'+pad(cur.getMinutes()));
+      if(h===null)return;const hm=(h||'').trim().match(/^(\d{1,2}):(\d{2})$/);if(!hm){alert('Hora inválida (hh:mm).');return;}
+      const iso=new Date(cur.getFullYear(),cur.getMonth(),cur.getDate(),+hm[1],+hm[2],0).toISOString();
+      CUR.demoras[i][ww]=iso;save();renderDemoras();
+      audit('DEMORA_MANUAL',(CUR.nroFinal||CUR.nro)+' · '+CUR.demoras[i].causa+' · '+ww+' '+fmtFull(iso));return;
+    }
+    if(btn.dataset.dx!==undefined){
+      const i=+btn.dataset.dx,ww=btn.dataset.dw;
+      if(!confirm('¿Borrar la hora '+ww+' de esta demora?'))return;
+      CUR.demoras[i][ww]='';save();renderDemoras();return;
+    }
+    return;
+  }
+});
+function guardarHoraManual(){
+  let k=$('m-hora').dataset.k;if(!k)return;
+  const f=$('h-fecha').value,h=$('h-hora').value;
+  if(!f||!h){toast('Completá fecha y hora.',1);return;}
+  const iso=new Date(f+'T'+h+':00').toISOString();
+  if(k.indexOf('RUTA:')===0){
+    const rk=k.slice(5);
+    CUR.ruta[rk]=iso;CUR.rutaMeta=CUR.rutaMeta||{};CUR.rutaMeta[rk]={modo:'manual',asentada:nowISO()};
+    if(CUR.estado==='asignado')CUR.estado='encurso';
+    save();renderRuta();renderFlow();
+    audit('RUTA_MANUAL',(CUR.nroFinal||CUR.nro)+' · '+rk+' · hecho: '+fmtFull(iso));
+    cerrarModalHora();toast('Hora de ruta cargada a mano.');return;
+  }
+  CUR.stamps[k]=iso;
+  CUR.stampsMeta=CUR.stampsMeta||{};
+  CUR.stampsMeta[k]={modo:'manual',asentada:nowISO()};
+  if(CUR.estado==='asignado')CUR.estado='encurso';
+  save();renderStamps();renderFlow();renderDesp();
+  audit('HORA_CARGADA_MANUAL',(CUR.nroFinal||CUR.nro)+' · '+k+' · hecho: '+fmtFull(iso)+' · asentada: '+fmtFull(CUR.stampsMeta[k].asentada));
+  cerrarModalHora();
+  toast('Hora cargada a mano y asentada en el registro.');
+}
+
+/* ---------- comprobante PDF con formato del vale de papel ---------- */
+function pdfVale(){
+  const d=CUR; if(!d){toast('Abrí un vale primero.',1);return;}
+  const w=window.open('','_blank');
+  if(!w){toast('Permití las ventanas emergentes para generar el PDF.',1);return;}
+  const F=(iso)=>iso?fmtFull(iso):'';
+  const HM=(iso)=>iso?fmtHM(iso):'';
+  const pcos=(d.pcos&&d.pcos.length)?d.pcos:[d.prac].concat(d.prac2?[d.prac2]:[]).filter(Boolean);
+  const v={pcos:pcos};
+  const sd=sentidoServ(d);
+  const RENT=[['zc','Zona Común'],['k37','Km. 37'],['k22','Km. 22'],['k11','Km. 11'],['ante','Antepuerto']];
+  const RSAL=[['ante','Antepuerto'],['k11','Km. 11'],['k22','Km. 22'],['k37','Km. 37'],['zc','Zona Común']];
+  const rdefs=sd==='sal'?RSAL:RENT;
+  const rutaTit=sd==='sal'?'SALIDA':'ENTRADA';
+  const rem=d.remolNom||{};
+  const firmas=d.firmas||{};
+  const css=`@page{size:A4;margin:11mm}*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    body{color:#10212e;font-size:10.5px}
+    .vale{border:2px solid #10212e;max-width:190mm;margin:0 auto}
+    .vhead{display:flex;border-bottom:2px solid #10212e}
+    .vhead .logo{padding:8px 12px;border-right:2px solid #10212e;min-width:54mm}
+    .vhead .logo .co{font-size:15px;font-weight:800;font-style:italic;color:#0a3d62}
+    .vhead .logo .sub{font-size:8px;color:#436072}
+    .vhead .meta{flex:1;display:flex;flex-direction:column}
+    .vhead .meta .r{display:flex;border-bottom:1px solid #c9d6de}
+    .vhead .meta .r:last-child{border-bottom:none}
+    .vhead .meta .c{flex:1;padding:4px 8px;border-right:1px solid #c9d6de;font-size:9px}
+    .vhead .meta .c b{display:block;font-size:7.5px;color:#6f8694;text-transform:uppercase;letter-spacing:.3px}
+    .grid{display:flex;border-bottom:2px solid #10212e}
+    .gcol{flex:1;border-right:1px solid #c9d6de}
+    .gcol:last-child{border-right:none}
+    .grow{display:flex;border-bottom:1px solid #e0e8ed}
+    .grow:last-child{border-bottom:none}
+    .gk{flex:0 0 42%;padding:4px 7px;background:#f3f7fa;font-size:8px;font-weight:bold;text-transform:uppercase;color:#436072;border-right:1px solid #e0e8ed;display:flex;align-items:center}
+    .gv{flex:1;padding:4px 7px;font-size:10px;font-weight:600}
+    .sect{background:#10212e;color:#fff;font-size:8.5px;font-weight:bold;letter-spacing:1px;padding:3px 8px;text-transform:uppercase}
+    table{width:100%;border-collapse:collapse}
+    td,th{border:1px solid #c9d6de;padding:3px 6px;font-size:9.5px}
+    th{background:#eef3f6;font-size:8px;text-transform:uppercase;color:#436072}
+    .firmasrow{display:flex;border-top:2px solid #10212e}
+    .fbox{flex:1;border-right:1px solid #c9d6de;padding:6px;text-align:center;min-height:80px;display:flex;flex-direction:column;justify-content:flex-end}
+    .fbox:last-child{border-right:none}
+    .fbox img{max-width:90%;max-height:46px;margin:0 auto}
+    .fbox .fl{font-size:8px;color:#6f8694;border-top:1px solid #10212e;padding-top:3px;margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+    .foot{font-size:7.5px;color:#6f8694;padding:6px 8px;text-align:center}`;
+  let html='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Vale '+(d.nroFinal||d.nro)+'</title><style>'+css+'</style></head><body><div class="vale">';
+  // encabezado
+  html+='<div class="vhead"><div class="logo"><div class="co">Buenos Aires Ltda.</div><div class="sub">Cooperativa de Trabajo de Practicaje y Pilotaje Buenos Aires Ltda.</div><div class="sub" style="margin-top:4px;font-weight:bold">COMPROBANTE DE SERVICIO</div></div>'+
+    '<div class="meta"><div class="r"><div class="c"><b>Despacho N°</b>'+(d.nroFinal||d.nro)+'</div><div class="c"><b>Prácticos</b>'+v.pcos.join(' · ')+'</div></div>'+
+    '<div class="r"><div class="c"><b>Agencia</b>'+(d.agen||'')+'</div><div class="c"><b>Servicio</b>'+(d.serv||rutaTit)+'</div></div></div></div>';
+  // grilla datos del buque (dos columnas estilo vale papel)
+  html+='<div class="grid"><div class="gcol">'+
+    '<div class="grow"><div class="gk">Buque</div><div class="gv">'+(d.buque||'')+'</div></div>'+
+    '<div class="grow"><div class="gk">Eslora (LOA)</div><div class="gv">'+(d.eslora||'')+'</div></div>'+
+    '<div class="grow"><div class="gk">Manga</div><div class="gv">'+(d.manga||'')+'</div></div>'+
+    '<div class="grow"><div class="gk">Puntal</div><div class="gv">'+(d.puntal||'')+'</div></div>'+
+    '<div class="grow"><div class="gk">Coeficiente (CF)</div><div class="gv">'+(d.cf||'')+'</div></div>'+
+    '</div><div class="gcol">'+
+    '<div class="grow"><div class="gk">Señal radio</div><div class="gv">'+(d.senal||'')+'</div></div>'+
+    '<div class="grow"><div class="gk">Bandera</div><div class="gv">'+(d.band||'')+'</div></div>'+
+    '<div class="grow"><div class="gk">Calado PR / PP</div><div class="gv">'+(d.cpr||'')+' / '+(d.cpp||'')+'</div></div>'+
+    '<div class="grow"><div class="gk">De / A</div><div class="gv">'+(d.desde||'')+' → '+(d.hasta||'')+'</div></div>'+
+    '<div class="grow"><div class="gk">C/Máquina</div><div class="gv">'+((d.cmaq||'si').toUpperCase()==='SI'?'SÍ':'NO')+'</div></div>'+
+    '</div></div>';
+  // fechas y horas
+  html+='<div class="sect">Fechas / Horas</div><table><tr><th>Pedido</th><th>Embarco</th><th>Inicio</th><th>Final</th><th>Desembarco</th></tr>'+
+    '<tr><td>'+((d.fecha?d.fecha.split("-").reverse().join("/"):'')+' '+(d.hora||''))+'</td><td>'+F(d.stamps.embarco)+'</td><td>'+F(d.stamps.inicio)+'</td><td>'+F(d.stamps.fin)+'</td><td>'+F(d.stamps.desembarco)+'</td></tr></table>';
+  // hoja de ruta direccional
+  html+='<div class="sect">Hoja de ruta — '+rutaTit+'</div><table><tr>'+rdefs.map(([k,l])=>'<th>'+l+'</th>').join('')+'</tr><tr>'+rdefs.map(([k,l])=>'<td>'+HM(d.ruta[k])+'</td>').join('')+'</tr></table>';
+  // remolcadores + lancha/remís
+  html+='<div class="sect">Remolcadores y logística</div><table><tr><th>Remolcador proa</th><th>Remolcador popa</th><th>Tercero</th><th>Lancha</th><th>Remís</th></tr>'+
+    '<tr><td>'+(rem.proa||'—')+'</td><td>'+(rem.popa||'—')+'</td><td>'+(rem.tercero||'—')+'</td><td>'+(d.lancha||'—')+'</td><td>'+(d.rem||'—')+'</td></tr></table>';
+  // observaciones
+  if((d.obsChips&&d.obsChips.length)||d.obsTxt){
+    html+='<div class="sect">Observaciones</div><div style="padding:6px 8px;font-size:9.5px">'+
+      ((d.obsChips||[]).join(' · '))+(d.obsTxt?'<br>'+d.obsTxt:'')+'</div>';
+  }
+  // firmas
+  const acl=CUR.aclaraciones||{};
+  const aclLine=t=>t?('<div style="font-size:9px;color:#333;margin-top:2px">'+t+'</div>'):'';
+  html+='<div class="firmasrow">'+
+    '<div class="fbox">'+(firmas.prac?'<img src="'+firmas.prac+'">':'')+'<div class="fl">Práctico</div>'+aclLine(acl.prac||CUR.prac)+'</div>'+
+    '<div class="fbox">'+(firmas.cap?'<img src="'+firmas.cap+'">':'')+'<div class="fl">Capitán</div>'+aclLine(acl.cap)+'</div>'+
+    '<div class="fbox"><div class="fl">Sello del buque</div></div></div>';
+  html+='<div class="foot">Comprobante generado por BITÁCORA · '+new Date().toLocaleString('es-AR')+' · Las horas y firmas se encuentran asentadas con sello de integridad en el sistema. Desarrollado por LTELC.</div>';
+  html+='</div><scr'+'ipt>window.onload=function(){setTimeout(function(){window.print();},300);}</scr'+'ipt></body></html>';
+  w.document.write(html); w.document.close();
+}
+
+function cerrarModalHora(){
+  const m=document.getElementById('m-hora');
+  if(m){m.classList.remove('on');m.style.cssText='';m.style.display='none';}
+}
+window.openHora=function(k){
+  const lab=(STAMPS.find(x=>x[0]===k)||['',k])[1];
+  const pad=n=>String(n).padStart(2,'0');
+  const cur=CUR.stamps[k]?new Date(CUR.stamps[k]):new Date();
+  const m=$('m-hora');
+  if(m){
+    // forzar visibilidad con estilo inline (a prueba de CSS que falle)
+    m.style.cssText='position:fixed;inset:0;background:rgba(8,20,30,.6);display:flex;align-items:center;justify-content:center;z-index:99999;padding:16px';
+    $('h-titulo').textContent=lab;
+    m.dataset.k=k;
+    $('h-fecha').value=cur.getFullYear()+'-'+pad(cur.getMonth()+1)+'-'+pad(cur.getDate());
+    $('h-hora').value=pad(cur.getHours())+':'+pad(cur.getMinutes());
+    m.classList.add('on');
+    setTimeout(()=>{try{$('h-hora').focus();}catch(e){}},80);
+    return;
+  }
+  // fallback (solo si faltara el modal)
+  const h=prompt('Hora de '+lab+' (hh:mm):',pad(cur.getHours())+':'+pad(cur.getMinutes()));
+  if(h===null)return;
+  const hm=(h||'').trim().match(/^(\d{1,2}):(\d{2})$/);
+  if(!hm){alert('Hora inválida (hh:mm).');return;}
+  const iso=new Date(cur.getFullYear(),cur.getMonth(),cur.getDate(),+hm[1],+hm[2],0).toISOString();
+  CUR.stamps[k]=iso;CUR.stampsMeta=CUR.stampsMeta||{};CUR.stampsMeta[k]={modo:'manual',asentada:nowISO()};
+  if(CUR.estado==='asignado')CUR.estado='encurso';
+  save();renderStamps();renderFlow();renderDesp();
+  toast('Hora de '+lab+' actualizada.');
+}
+function renderRuta(){
+  const locked=CUR.estado==='cerrado';
+  const sd=sentidoServ(CUR);
+  const esMov=!((CUR.serv||'').startsWith('ENT')||CUR.es==='E'||(CUR.serv||'').startsWith('SAL')||CUR.es==='S');
+  // etiqueta del sentido
+  $('v-ruta-sent').textContent = sd==='ent'?'· entrada (ZC → puerto)':sd==='sal'?'· salida (puerto → ZC)':(esMov?'· movimiento':'');
+  // selector solo para MOV
+  const pick=$('v-ruta-pick');
+  if(esMov && !locked){
+    pick.style.display='block';
+    $('v-ruta-seg').querySelectorAll('button').forEach(b=>{
+      b.classList.toggle('on',b.dataset.v===(CUR.rutaSentido||''));
+      b.onclick=()=>{CUR.rutaSentido=b.dataset.v;save();renderRuta();};
+    });
+  } else pick.style.display='none';
+  const defs=rutaDefs(CUR);
+  if(!defs.length){
+    $('v-ruta').innerHTML='<div class="hint">'+(esMov?'Elegí un sentido arriba para cargar las posiciones, o dejá “Sin hoja de canal” si el movimiento no pasa por el canal.':'—')+'</div>';
+    return;
+  }
+  CUR.rutaMeta=CUR.rutaMeta||{};
+  $('v-ruta').innerHTML=defs.map(([k,label])=>{
+    const v=CUR.ruta[k];const meta=CUR.rutaMeta[k]||{};const dif=meta.modo==='manual';
+    return '<div class="stamp mini '+(v?'done':'')+'"><div class="si"><div class="sl">'+label+'</div>'+
+      (v?'<div class="sv">'+fmtHM(v)+'</div>'+(dif?'<div class="difbadge">✎ a mano</div>':''):'<div class="sv pend">—</div>')+
+      '</div>'+(locked?'<button>✓</button>':
+        '<div class="sbtns">'+
+        (v?'':'<button data-k="'+k+'" onclick="vMarcarRuta(\''+k+'\')">Marcar<br>ahora</button>')+
+        '<button class="editar" data-redit="'+k+'" onclick="openHoraRuta(\''+k+'\')">'+(v?'✎':'⌨')+'</button>'+
+        (v?'<button class="editar clr2" data-rdel="'+k+'" onclick="vBorrarRuta(\''+k+'\')">🗑</button>':'')+
+        '</div>')+'</div>';
+  }).join('');
+  // los clics de la hoja de ruta se manejan por delegación global (ver más abajo)
+}
+// (la hoja de ruta ahora se maneja en el listener unificado de arriba)
+window.openHoraRuta=function(k){
+  const defs=rutaDefs(CUR);const lab=(defs.find(x=>x[0]===k)||['',k])[1];
+  const m=$('m-hora');
+  $('h-titulo').textContent='Hoja de ruta · '+lab;
+  m.dataset.k='RUTA:'+k;
+  const cur=CUR.ruta[k]?new Date(CUR.ruta[k]):new Date();
+  const pad=n=>String(n).padStart(2,'0');
+  $('h-fecha').value=cur.getFullYear()+'-'+pad(cur.getMonth()+1)+'-'+pad(cur.getDate());
+  $('h-hora').value=pad(cur.getHours())+':'+pad(cur.getMinutes());
+  m.classList.add('on');
+  m.style.cssText='position:fixed;inset:0;background:rgba(8,20,30,.6);display:flex;align-items:center;justify-content:center;z-index:99999;padding:16px';
+  setTimeout(()=>{try{$('h-hora').focus();}catch(e){}},80);
+}
+function renderDemoras(){
+  const locked=CUR.estado==='cerrado';
+  $('btn-add-dem').style.display=locked?'none':'flex';
+  $('v-demoras').innerHTML=CUR.demoras.map((d,i)=>
+    '<div class="drow"><div class="dtop">'+
+    '<select data-i="'+i+'" '+(locked?'disabled':'')+'>'+DEMCAUSAS.map(c=>'<option'+(c===d.causa?' selected':'')+'>'+c+'</option>').join('')+'</select>'+
+    (locked?'':'<button class="del" data-i="'+i+'">✕</button>')+'</div>'+
+    '<div class="dst"><div>Desde <b>'+(d.desde?fmtHM(d.desde):'—')+'</b>'+(locked?'':' <button data-i="'+i+'" data-w="desde">'+(d.desde?'ahora':'marcar')+'</button> <button class="editar" data-dm="'+i+'" data-dw="desde">⌨</button>'+(d.desde?' <button class="editar clr" data-dx="'+i+'" data-dw="desde">🗑</button>':''))+'</div>'+
+    '<div>Hasta <b>'+(d.hasta?fmtHM(d.hasta):'—')+'</b>'+(locked?'':' <button data-i="'+i+'" data-w="hasta">'+(d.hasta?'ahora':'marcar')+'</button> <button class="editar" data-dm="'+i+'" data-dw="hasta">⌨</button>'+(d.hasta?' <button class="editar clr" data-dx="'+i+'" data-dw="hasta">🗑</button>':''))+'</div></div></div>'
+  ).join('')||'<div class="hint" style="margin-bottom:9px">Sin demoras registradas.</div>';
+  $('v-demoras').querySelectorAll('select').forEach(s=>s.onchange=()=>{CUR.demoras[+s.dataset.i].causa=s.value;save();});
+}
+// (las demoras ahora se manejan en el listener unificado de arriba)
+$('btn-add-dem').onclick=()=>{CUR.demoras.push({causa:DEMCAUSAS[0],desde:'',hasta:''});save();renderDemoras();};
+function renderFlow(){
+  const idx=CUR.estado==='asignado'?0:CUR.estado==='encurso'?1:2;
+  $('v-flow').innerHTML=['','',''].map((_,i)=>'<div class="fs '+(i<idx?'done':i===idx?'cur':'')+'"></div>').join('');
+  const e=EST[CUR.estado];let extra='';
+  if(CUR.estado==='cerrado')extra=' · Nº definitivo <b style="color:var(--gold2)">'+CUR.nroFinal+'</b> · cerrado por <b>'+CUR.cerradoPor+'</b> el '+fmtFull(CUR.cerradoEn);
+  if(CUR.estado==='pendasesor')extra=' · requiere cierre del asesor de turno';
+  $('v-stat').innerHTML='Estado: <b style="color:'+e.c+'">'+e.t+'</b>'+extra;
+  $('btn-close').style.display=(CUR.estado==='cerrado')?'none':'flex';
+  $('btn-draft').style.display=(CUR.estado==='cerrado')?'none':'flex';
+  $('btn-close-asesor').style.display=(CUR.estado==='pendasesor')?'flex':'none';
+}
+/* ---------- pad de firma ---------- */
+const SIGPAD={};
+function initSigPad(canvasId,key){
+  const cv=$(canvasId);if(!cv||SIGPAD[canvasId])return;
+  const ctx=cv.getContext('2d');ctx.lineWidth=2.5;ctx.lineCap='round';ctx.strokeStyle='#11293a';
+  let drawing=false,last=null,dirty=false;
+  function pos(e){const r=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;
+    return {x:(t.clientX-r.left)*(cv.width/r.width),y:(t.clientY-r.top)*(cv.height/r.height)};}
+  function start(e){drawing=true;last=pos(e);cv.parentElement&&cv.parentElement.parentElement&&cv.parentElement.parentElement.classList.add('drawing');e.preventDefault();}
+  function move(e){if(!drawing)return;const p=pos(e);ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(p.x,p.y);ctx.stroke();last=p;dirty=true;e.preventDefault();}
+  function end(){drawing=false;}
+  cv.addEventListener('mousedown',start);cv.addEventListener('mousemove',move);window.addEventListener('mouseup',end);
+  cv.addEventListener('touchstart',start,{passive:false});cv.addEventListener('touchmove',move,{passive:false});cv.addEventListener('touchend',end);
+  SIGPAD[canvasId]={ctx,cv,isDirty:()=>dirty,reset:()=>{ctx.clearRect(0,0,cv.width,cv.height);dirty=false;}};
+}
+function loadSig(canvasId,dataURL){
+  const o=SIGPAD[canvasId];if(!o)return;o.reset();
+  if(dataURL){const img=new Image();img.onload=()=>o.ctx.drawImage(img,0,0,o.cv.width,o.cv.height);img.src=dataURL;}
+}
+function renderFirmas(){
+  initSigPad('sig-prac');initSigPad('sig-cap');
+  if($('acl-prac'))$('acl-prac').value=(CUR.aclaraciones&&CUR.aclaraciones.prac)||CUR.prac||'';
+  if($('acl-cap'))$('acl-cap').value=(CUR.aclaraciones&&CUR.aclaraciones.cap)||'';
+  if($('acl-prac'))$('acl-prac').oninput=()=>{CUR.aclaraciones=CUR.aclaraciones||{};CUR.aclaraciones.prac=$('acl-prac').value;save();};
+  if($('acl-cap'))$('acl-cap').oninput=()=>{CUR.aclaraciones=CUR.aclaraciones||{};CUR.aclaraciones.cap=$('acl-cap').value;save();};
+  const fp=CUR.firmas||{};
+  ['prac','cap'].forEach(k=>{
+    const box=$('fb-'+(k));box.classList.toggle('signed',!!fp[k]);
+    loadSig('sig-'+k,fp[k]||'');
+  });
+  const locked=CUR.estado==='cerrado';
+  document.querySelectorAll('[data-clear],[data-save]').forEach(b=>b.style.display=locked?'none':'');
+}
+document.addEventListener('click',e=>{
+  const cl=e.target.getAttribute&&e.target.getAttribute('data-clear');
+  const sv=e.target.getAttribute&&e.target.getAttribute('data-save');
+  if(cl){SIGPAD['sig-'+cl]&&SIGPAD['sig-'+cl].reset();$('fb-'+cl).classList.remove('signed');if(CUR&&CUR.firmas){delete CUR.firmas[cl];save();}}
+  if(sv){
+    const pad=SIGPAD['sig-'+sv];if(!pad)return;
+    if(!pad.isDirty()){toast('Firmá antes de confirmar.',1);return;}
+    CUR.firmas=CUR.firmas||{};CUR.firmas[sv]=pad.cv.toDataURL('image/png');
+    CUR.firmasSello=CUR.firmasSello||{};CUR.firmasSello[sv]=nowISO();
+    $('fb-'+sv).classList.add('signed');save();
+    audit('FIRMA',(CUR.nroFinal||CUR.nro)+' · '+(sv==='prac'?'práctico':'capitán'));
+    toast('Firma del '+(sv==='prac'?'práctico':'capitán')+' asentada.');
+  }
+});
+function pullForm(){
+  CUR.cpr=$('v-cpr').value;CUR.cpp=$('v-cpp').value;
+  CUR.lancha=$('v-lancha').value;CUR.rem=$('v-rem').value;
+  CUR.obsTxt=$('v-obstxt').value.trim();
+}
+function hasObs(){return CUR.obsChips.length>0||CUR.obsTxt!=='';}
+$('btn-draft').onclick=async()=>{pullForm();save();renderDesp();await audit('BORRADOR',CUR.nro);toast('Borrador guardado en el dispositivo.');};
+$('h-save').onclick=guardarHoraManual;
+$('btn-pdf-vale').onclick=pdfVale;
+$('m-hora').addEventListener('click',e=>{if(e.target===$('m-hora'))cerrarModalHora();});
+$('btn-close').onclick=async()=>{
+  pullForm();
+  const faltan=STAMPS.filter(([k])=>!CUR.stamps[k]);
+  if(faltan.length){toast('Faltan marcar: '+faltan.map(f=>f[1]).join(', ')+'.',1);return;}
+  const demAb=CUR.demoras.filter(d=>d.desde&&!d.hasta);
+  if(demAb.length){toast('Hay demoras sin hora de finalización.',1);return;}
+  if(hasObs()){
+    CUR.estado='pendasesor';save();renderFlow();renderDesp();
+    pushNotif('Vale Nº '+CUR.nro+' A OBSERVAR · requiere cierre del asesor ('+CUR.buque+')','observar');await audit('PASE_ASESOR',CUR.nro+' · con observación: '+(CUR.obsChips.join(', ')||'detalle'));
+    toast('El vale tiene observación: pasa al asesor de turno para su cierre.');
+  }else{
+    CUR.estado='cerrado';CUR.cerradoPor=CUR.prac+' (práctico)';CUR.cerradoEn=nowISO();
+    save();renderFlow();renderDesp();
+    pushNotif('Vale Nº '+CUR.nro+' CERRADO por el práctico ('+CUR.buque+')','cerrado');await audit('CIERRE_PRACTICO','Nº '+CUR.nro);
+    toast('Vale Nº '+CUR.nro+' cerrado por el práctico.');
+  }
+};
+$('btn-close-asesor').onclick=async()=>{
+  pullForm();
+  CUR.estado='cerrado';CUR.cerradoPor='Asesor de turno';CUR.cerradoEn=nowISO();
+  save();renderFlow();renderDesp();
+  await audit('CIERRE_ASESOR','Nº '+CUR.nro);
+  toast('Vale Nº '+CUR.nro+' cerrado por el asesor.');
+};
+
+/* ---------- export ---------- */
+function dl(name,csv){
+  try{
+    const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;
+    document.body.appendChild(a);a.click();a.remove();
+    toast('Archivo generado: '+name);
+  }catch(e){toast('Export no disponible en la vista previa; funciona al publicar.',1);}
+}
+function demStr(d){return d.demoras.map(x=>x.causa+' '+fmtHM(x.desde)+'–'+fmtHM(x.hasta)).join(' | ');}
+$('x-maestro').onclick=()=>{
+  let csv='Nº;Prov.;Estado;Servicio;Sentido ruta;Buque;Agencia;Bandera;Señal;Eslora;Manga;Puntal;UF;CF;Práctico 2;Calado Pr;Calado Pp;Fecha pedido;Hora pedido;Desde;Hasta;Bow;C/Máquina;Práctico;Lancha;Empresa remís;Tramos;Remolques;Embarco;Inicio;Fin;Desembarco;Ruta ZC;Km37;Km22;Km11;Antepuerto;Demoras;Obs. tipo;Obs. detalle;Cerrado por;Cerrado el\n';
+  DESP.forEach(d=>{csv+=[d.nroFinal||'',d.nro,EST[d.estado].t,d.serv||'',(sentidoServ(d)==='ent'?'ENTRADA':sentidoServ(d)==='sal'?'SALIDA':'MOV/—'),d.buque,d.agen,d.band,d.senal,d.eslora,d.manga,d.puntal,d.uf||'',d.cf,d.prac2||'',d.cpr,d.cpp,d.fecha,d.hora,d.desde,d.hasta,d.bow.toUpperCase(),d.cmaq.toUpperCase(),d.prac,d.lancha,d.rem,d.tramos.join(' '),((d.remolNom&&[d.remolNom.proa,d.remolNom.popa,d.remolNom.tercero].filter(Boolean).join(' + '))||d.remol.join('+')||'0'),fmtFull(d.stamps.embarco),fmtFull(d.stamps.inicio),fmtFull(d.stamps.fin),fmtFull(d.stamps.desembarco),fmtHM(d.ruta.zc),fmtHM(d.ruta.k37),fmtHM(d.ruta.k22),fmtHM(d.ruta.k11),fmtHM(d.ruta.ante),demStr(d),(d.obsChips||[]).join(' / '),(d.obsTxt||'').replace(/;/g,','),d.cerradoPor,fmtFull(d.cerradoEn)].join(';')+'\n';});
+  dl('maestro_vales.csv',csv);
+};
+$('x-prac').onclick=()=>{ if(!gateAcceso('exportar trabajos por práctico (puntaje)')) return;
+  let csv='PRACTICO;Nº;BUQUE;AGENCIA;SERVICIO;FECHA;DE;A;INICIO;FIN;PUNTOS;ESTADO\n';
+  const rows=[];
+  DESP.forEach(d=>{[d.prac].concat(d.prac2?[d.prac2]:[]).forEach(p=>rows.push([p,d]));});
+  rows.sort((a,b)=>a[0].localeCompare(b[0]));
+  rows.forEach(([p,d])=>{csv+=[p,d.nroFinal||d.nro,d.buque,d.agen,d.serv||'',d.fecha,d.desde,d.hasta,fmtFull(d.stamps.inicio),fmtFull(d.stamps.fin),1,EST[d.estado].t].join(';')+'\n';});
+  dl('trabajos_por_practico_puntos.csv',csv);
+};
+$('x-fact').onclick=()=>{ if(!gateAcceso('exportar la facturación (confidencial)')) return;
+  const zc=v=>v==='ZONA COMÚN'?'ZC':v, df=f=>f.split('-').reverse().join('/');
+  let csv='DESPACHO;FECHA;BUQUE;AGENCIA;PRACTICO;SERVICIO;DE;A;CAL PR;CAL PP;BANDERA;ESLORA;MANGA;PUNTAL;UF;CF\n';
+  DESP.forEach(d=>{
+    [d.prac].concat(d.prac2?[d.prac2]:[]).forEach(p=>{
+      csv+=[d.nroFinal||d.nro,df(d.fecha),d.buque,d.agen,p,d.serv||'',zc(d.desde),zc(d.hasta),d.cpr||'SD',d.cpp||'SD',d.band,d.eslora,d.manga,d.puntal,d.uf||'',d.cf].join(';')+'\n';
+    });
+  });
+  dl('facturacion_FACT_NC.csv',csv);
+};
+function renderExp(){
+  $('x-tot').textContent=DESP.length;
+  $('x-cer').textContent=DESP.filter(d=>d.estado==='cerrado').length;
+  $('x-pa').textContent=DESP.filter(d=>d.estado==='pendasesor').length;
+  $('x-bor').textContent=DESP.filter(d=>d.estado==='asignado'||d.estado==='encurso').length;
+}
+
+/* ---------- mareas ---------- */
+$('marea-add').onclick=async()=>{
+  const v=parseFloat($('marea-alt').value);
+  if(isNaN(v)){toast('Ingresá la altura en metros.',1);return;}
+  MAREAS.push({t:nowISO(),alt:v});if(MAREAS.length>60)MAREAS=MAREAS.slice(-60);
+  $('marea-alt').value='';save();renderMareas();
+  await audit('MAREA','Altura '+v.toFixed(2)+' m');
+  toast('Altura registrada: '+v.toFixed(2)+' m.');
+};
+function renderMareas(){
+  $('marea-list').innerHTML=[...MAREAS].reverse().slice(0,6).map(m=>
+    '<div class="kv"><span>'+fmtFull(m.t)+'</span><span style="color:var(--cyan)">'+m.alt.toFixed(2)+' m</span></div>').join('')||'<div class="hint">Sin registros.</div>';
+}
+
+/* ---------- parámetros ---------- */
+const CHMAP={agen:'ch-agen',pra:'ch-pra',lan:'ch-lan',rem:'ch-rem',remolc:'ch-remolc',dnorte:'ch-dnorte',dsur:'ch-dsur',obs:'ch-obs'};
+function renderParams(){
+  if(!PARAMS.remolc||Array.isArray(PARAMS.remolc)){PARAMS.remolc=['RUA CAP. LUCIO R','QUERANDÍ','RUA DON JOSE','RANQUEL','ONA DON LORENZO','ONA DON VICENTE','BERNARDO R','TOCONAO','MORA','DAMKA'];}
+  if(!PARAMS.remolcBP)PARAMS.remolcBP={'RUA CAP. LUCIO R':60,'QUERANDÍ':60,'RUA DON JOSE':60,'RANQUEL':76.8,'ONA DON LORENZO':60,'ONA DON VICENTE':46.5,'BERNARDO R':60,'TOCONAO':52,'MORA':60,'DAMKA':60};
+  for(const k in CHMAP){
+    $(CHMAP[k]).innerHTML=PARAMS[k].map((x,i)=>'<span class="chip">'+x+'<button data-k="'+k+'" data-i="'+i+'">✕</button></span>').join('');
+  }
+  document.querySelectorAll('.chip button').forEach(b=>b.onclick=()=>{
+    PARAMS[b.dataset.k].splice(+b.dataset.i,1);save();renderParams();
+  });
+}
+document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{
+  const k=b.dataset.add,inp=$('add-'+k);
+  if(inp.value.trim()){PARAMS[k].push(inp.value.trim());inp.value='';save();renderParams();}
+});
+
+/* ---------- log ---------- */
+function renderLog(){
+  $('logbox').innerHTML=LOG.length?[...LOG].reverse().slice(0,60).map(e=>
+    '<div class="lrow"><div class="lt">'+fmtHM(e.t)+'</div><div class="lx">'+e.evt+' — '+e.detail+
+    '<div class="lh">'+(e.hash||'').slice(0,28)+'…</div></div></div>').join('')
+    :'<div class="hint">Sin eventos todavía.</div>';
+}
+
+/* ---------- notificaciones en vivo ---------- */
+let LASTNOTIF=0;
+function renderNotifs(flash){
+  const ns=dbNotifs();
+  $('nbcount').textContent=ns.length;
+  const last=ns.slice(-6).reverse();
+  $('nbmove').innerHTML=last.length?last.map(n=>'<span>'+fmtFull(n.t)+' · <b>'+n.msg+'</b></span>').join(''):'<span>Sin novedades — esperando comprobantes…</span>';
+  if(flash&&ns.length>LASTNOTIF){
+    const n=ns[ns.length-1];
+    toast('🔔 '+n.msg);
+  }
+  LASTNOTIF=ns.length;
+}
+setInterval(()=>{DESP=dbLoadDesp();renderNotifs(true);},2500);
+
+/* ---------- init ---------- */
+if(BC)BC.onmessage=()=>{DESP=dbLoadDesp();renderDesp();if(CUR){const m=DESP.find(x=>x.nro===CUR.nro);if(m)CUR=m;}};
+(function(){const c=getCreds();if($('acc-user'))$('acc-user').value=c.user;if($('acc-pin'))$('acc-pin').value=c.pin;})();
+if($('acc-save'))$('acc-save').onclick=async()=>{
+  const u=($('acc-user').value||'').trim(),p=$('acc-pin').value||'';
+  if(!u||!p){toast('Completá usuario y contraseña.');return;}
+  toast('Conectando…');
+  const res = await api.login(u, p);
+  if(res.ok){
+    setCreds(u,p); _gateOK=true; _gateUntil=Date.now()+600000;
+    toast('Sesión iniciada como '+res.user.nombre+' ('+res.user.rol+')');
+    await api.pullParams(); renderParams();
+    const pulled = await api.pullDespachos();
+    if(pulled){ DESP=dbLoadDesp(); renderDesp(); toast('Datos sincronizados ✓'); }
+  } else {
+    const c=getCreds();
+    if(u===c.user && p===c.pin){ setCreds(u,p);_gateOK=true;_gateUntil=Date.now()+600000;toast('Sesión local (sin servidor).');}
+    else { toast('Usuario o contraseña incorrectos. '+(res.error||''), true); }
+  }
+};
+netUI();renderDesp();renderParams();renderLog();renderMareas();renderNotifs(false);startHeaderLive();
+
+/* --- Sincronización automática al arranque --- */
+(async function initSync(){
+  const ok = await api.checkSession();
+  if(ok){
+    toast("Reconectado como "+API_USER.nombre+" ✓");
+    await api.pullParams(); renderParams();
+    const pulled = await api.pullDespachos();
+    if(pulled){ DESP=dbLoadDesp(); renderDesp(); }
+  }
+})();
+
+/* --- Sync periódico cada 60s cuando hay sesión --- */
+setInterval(async()=>{
+  if(api.isOnline){
+    await api.pullDespachos();
+    DESP=dbLoadDesp(); renderDesp();
+  }
+}, 60000);
+
+
+/* ===== MI CUENTA ===== */
+function abrirCuenta() {
+  document.getElementById('modal-cuenta').style.display = 'flex';
+  document.getElementById('cuenta-nombre').textContent = API_USER ? API_USER.nombre : getCreds().user;
+  document.getElementById('cuenta-rol').textContent = API_USER ? API_USER.rol : 'local';
+  document.getElementById('pw-actual').value = '';
+  document.getElementById('pw-nueva').value = '';
+  document.getElementById('pw-confirmar').value = '';
+  document.getElementById('pw-err').style.display = 'none';
+  document.getElementById('pw-ok').style.display = 'none';
+}
+function cerrarCuenta() {
+  document.getElementById('modal-cuenta').style.display = 'none';
+}
+async function cambiarPassword() {
+  const actual = document.getElementById('pw-actual').value;
+  const nueva = document.getElementById('pw-nueva').value;
+  const confirmar = document.getElementById('pw-confirmar').value;
+  const errEl = document.getElementById('pw-err');
+  const okEl = document.getElementById('pw-ok');
+  errEl.style.display = 'none'; okEl.style.display = 'none';
+  if (!actual || !nueva || !confirmar) { errEl.textContent = 'Completá todos los campos.'; errEl.style.display = 'block'; return; }
+  if (nueva !== confirmar) { errEl.textContent = 'Las contraseñas nuevas no coinciden.'; errEl.style.display = 'block'; return; }
+  if (nueva.length < 6) { errEl.textContent = 'La contraseña nueva debe tener al menos 6 caracteres.'; errEl.style.display = 'block'; return; }
+  const btn = document.getElementById('pw-btn');
+  btn.textContent = 'Actualizando…'; btn.disabled = true;
+  try {
+    const r = await fetch(API_BASE + '/api/usuarios/me/password', {
+      method: 'PUT', credentials: 'include',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + API_TOKEN },
+      body: JSON.stringify({ actual, nueva })
+    });
+    const j = await r.json();
+    if (j.ok) {
+      okEl.style.display = 'block';
+      document.getElementById('pw-actual').value = '';
+      document.getElementById('pw-nueva').value = '';
+      document.getElementById('pw-confirmar').value = '';
+      // Actualizar credenciales locales
+      setCreds(getCreds().user, nueva);
+    } else {
+      errEl.textContent = j.error || 'Error al actualizar.'; errEl.style.display = 'block';
+    }
+  } catch(e) {
+    errEl.textContent = 'Error de conexión con el servidor.'; errEl.style.display = 'block';
+  }
+  btn.textContent = 'Actualizar contraseña'; btn.disabled = false;
+}
+async function cerrarSesion() {
+  await api.logout();
+  cerrarCuenta();
+  mostrarLogin();
+}
+
+/* ===== LÓGICA PANTALLA DE LOGIN ===== */
+function mostrarApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('login-loading').style.display = 'none';
+  document.getElementById('main-app').style.display = 'flex';
+  // Mostrar botón de cuenta
+  const btnCuenta = document.getElementById('btn-cuenta');
+  if (btnCuenta) btnCuenta.style.display = 'block';
+  // Bloquear tab Parámetros si no es admin/gerencia/asesor
+  const rol = api.rol;
+  const puedeParams = ['admin','gerencia','asesor'].includes(rol);
+  document.querySelectorAll('nav button[data-p="p-conf"]').forEach(b => {
+    b.style.display = puedeParams ? '' : 'none';
+  });
+}
+function mostrarLogin(err) {
+  document.getElementById('login-loading').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('main-app').style.display = 'none';
+  if (err) {
+    const el = document.getElementById('login-err');
+    el.textContent = err; el.style.display = 'block';
+  }
+}
+
+// Verificar sesión al arrancar
+(async function arrancar() {
+  document.getElementById('login-loading').style.display = 'flex';
+  document.getElementById('login-screen').style.display = 'none';
+  const ok = await api.checkSession();
+  if (ok) {
+    mostrarApp();
+    await api.pullParams(); renderParams();
+    const pulled = await api.pullDespachos();
+    if (pulled) { DESP = dbLoadDesp(); renderDesp(); }
+  } else {
+    mostrarLogin();
+  }
+})();
+
+// Botón entrar
+document.getElementById('login-btn').onclick = async function() {
+  const u = (document.getElementById('login-user').value || '').trim();
+  const p = document.getElementById('login-pass').value || '';
+  if (!u || !p) { mostrarLogin('Completá usuario y contraseña.'); return; }
+  this.textContent = 'Conectando…'; this.disabled = true;
+  const res = await api.login(u, p);
+  this.textContent = 'Entrar'; this.disabled = false;
+  if (res.ok) {
+    setCreds(u, p); _gateOK = true; _gateUntil = Date.now() + 600000;
+    mostrarApp();
+    await api.pullParams(); renderParams();
+    const pulled = await api.pullDespachos();
+    if (pulled) { DESP = dbLoadDesp(); renderDesp(); toast('Bienvenido, ' + res.user.nombre + ' ✓'); }
+  } else {
+    const c = getCreds();
+    if (u === c.user && p === c.pin) {
+      setCreds(u, p); _gateOK = true; _gateUntil = Date.now() + 600000;
+      mostrarApp(); toast('Sesión local (sin conexión al servidor).');
+    } else {
+      mostrarLogin(res.error || 'Usuario o contraseña incorrectos.');
+    }
+  }
+};
+
+// Enter en el campo contraseña
+document.getElementById('login-pass').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') document.getElementById('login-btn').click();
+});
+document.getElementById('login-user').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') document.getElementById('login-pass').focus();
+});
+
+</script>
+</div>
+</body>
+</html>
